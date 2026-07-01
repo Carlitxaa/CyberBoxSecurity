@@ -45,7 +45,31 @@ const dashboardRoutes =
 const app =
   express();
 
-app.use(cors());
+const PORT =
+  process.env.PORT || 5000;
+
+const allowedOrigins =
+  (process.env.CORS_ORIGIN || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (
+        !origin ||
+        allowedOrigins.length === 0 ||
+        allowedOrigins.includes(origin)
+      ) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error("Origem bloqueada pelo CORS"));
+    },
+  })
+);
 
 app.use(
   express.json()
@@ -104,14 +128,20 @@ app.get(
   }
 );
 
-app.listen(
-  5000,
-  () => {
-    console.log(
-      "Servidor a correr na porta 5000"
-    );
+app.get(
+  "/health",
+  (req, res) => {
+    res.status(200).json({
+      status: "ok",
+    });
   }
 );
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Servidor a correr na porta ${PORT}`);
+});
 
 app.use(
   "/uploads",
