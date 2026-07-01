@@ -1,0 +1,161 @@
+.contactos {
+  background: #f5f3f4;
+  min-height: 100vh;
+}
+
+/* CONTEÚDO */
+
+.contactos-content {
+  background: #dff8fc;
+
+  display: grid;
+  grid-template-columns: 320px 700px;
+
+  justify-content: center;
+
+  gap: 80px;
+
+  padding: 70px;
+}
+
+.contact-info h2,
+.contact-form h2 {
+  margin-bottom: 20px;
+  font-size: 2rem;
+}
+
+.contact-text {
+  color: #6b7280;
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+/* CONTACTOS */
+
+.contact-item {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+
+  align-items: center;
+
+  gap: 20px;
+
+  margin-bottom: 40px;
+}
+
+.contact-item .icon-circle {
+  width: 60px;
+  height: 60px;
+}
+
+.contact-item .icon-circle {
+  min-width: 60px;
+}
+
+.contact-item h4 {
+  margin: 0 0 5px 0;
+  font-size: 18px;
+}
+
+.contact-item p {
+  margin: 0;
+  color: #111827;
+}
+
+.icon-circle {
+  width: 60px;
+  height: 60px;
+
+  border-radius: 50%;
+
+  background: #bceffc;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-circle svg {
+  color: #12c4eb;
+  font-size: 22px;
+}
+
+/* FORMULÁRIO */
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+
+  max-width: 700px;
+}
+
+.contact-form label {
+  margin-top: 15px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+
+  padding: 14px;
+
+  border: 1px solid #cfd8dc;
+  border-radius: 12px;
+
+  background: white;
+
+  font-size: 15px;
+}
+
+.contact-form textarea {
+  resize: vertical;
+}
+
+.contact-form button {
+  margin-top: 25px;
+
+  background: #12c4eb;
+  color: white;
+
+  border: none;
+  border-radius: 12px;
+
+  padding: 16px;
+
+  font-weight: 600;
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.contact-form button:hover {
+  opacity: 0.9;
+}
+
+.status-message {
+  margin-top: 20px;
+  font-weight: 600;
+}
+
+.status-message.success {
+  color: green;
+}
+
+.status-message.error {
+  color: #b91c1c;
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 1100px) {
+  .contactos-content {
+    grid-template-columns: 1fr;
+    padding: 40px 20px;
+  }
+
+  .contact-form {
+    max-width: 100%;
+  }
+}

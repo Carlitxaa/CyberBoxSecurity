@@ -1,0 +1,43 @@
+.servicos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  padding: 60px;
+}
+
+.servico-card {
+  background: #dff8fc;
+  padding: 30px;
+}
+
+.servico-card h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.servico-card p {
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+.servico-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.servico-card li {
+  margin-bottom: 10px;
+  color: #6b7280;
+}
+
+.servico-card li::before {
+  content: "○ ";
+  color: #12c4eb;
+  font-weight: bold;
+}
+
+@media (max-width: 900px) {
+  .servicos-grid {
+    grid-template-columns: 1fr;
+  }
+}

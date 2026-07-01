@@ -1,0 +1,88 @@
+/* NIS2.css */
+
+@import "./Servicos.css";
+
+/* Podes personalizar a NIS2 aqui mais tarde */
+
+.servicos .hero h1 {
+  font-size: 3.5rem;
+}
+
+.servicos .hero p {
+  max-width: 800px;
+}
+
+.servicos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  padding: 60px;
+}
+
+.servico-card {
+  background: #dff8fc;
+  padding: 30px;
+  transition: 0.3s;
+}
+
+.servico-card:hover {
+  transform: translateY(-5px);
+}
+
+.servico-card h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.servico-card p {
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+.servico-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.servico-card li {
+  margin-bottom: 10px;
+  color: #6b7280;
+}
+
+.servico-card li::before {
+  content: "○ ";
+  color: #12c4eb;
+  font-weight: bold;
+}
+
+.missao-section {
+  background: #dff8fc;
+  padding: 80px 60px;
+}
+
+.missao-content {
+  max-width: 900px;
+  margin: auto;
+  text-align: center;
+}
+
+.missao-content h2 {
+  margin-bottom: 25px;
+}
+
+.missao-content p {
+  line-height: 1.8;
+  margin-bottom: 20px;
+  color: #374151;
+}
+
+@media (max-width: 900px) {
+  .servicos-grid {
+    grid-template-columns: 1fr;
+    padding: 30px;
+  }
+
+  .missao-section {
+    padding: 50px 20px;
+  }
+}
