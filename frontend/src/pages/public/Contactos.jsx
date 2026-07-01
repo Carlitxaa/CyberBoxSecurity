@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import "./Contactos.css";
+import { API_URL } from "../../config/api";
 import logo from "../../assets/logo.png";
 
 import {
@@ -42,7 +43,7 @@ function Contactos() {
     }
 
     try {
-      await axios.post("http://localhost:5000/pedidos", {
+      await axios.post(`${API_URL}/pedidos`, {
         titulo: `Pedido de contacto: ${nome}`,
         categoria: "Contacto",
         prioridade: "Média",

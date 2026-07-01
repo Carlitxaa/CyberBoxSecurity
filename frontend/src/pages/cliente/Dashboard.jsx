@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_URL } from "../../config/api";
 import { FaFileAlt, FaExclamationTriangle, FaShieldAlt } from "react-icons/fa";
 import { getCurrentUser } from "../../utils/auth";
 
@@ -23,10 +24,10 @@ export default function Dashboard() {
     async function carregarDados() {
       try {
         const [docsRes, pedidosRes] = await Promise.all([
-          axios.get("http://localhost:5000/documentos", {
+          axios.get(`${API_URL}/documentos`, {
             params: { cliente: currentUser.empresa },
           }),
-          axios.get("http://localhost:5000/pedidos", {
+          axios.get(`${API_URL}/pedidos`, {
             params: { cliente: currentUser.empresa },
           }),
         ]);

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaArrowLeft } from "react-icons/fa";
+import { API_URL } from "../../config/api";
 import logo from "../../assets/logo.png";
 import { setCurrentUser } from "../../utils/auth";
 
@@ -23,7 +24,7 @@ function Login() {
       try {
         const response =
           await axios.post(
-            "http://localhost:5000/login",
+            `${API_URL}/login`,
             {
               email,
               password,

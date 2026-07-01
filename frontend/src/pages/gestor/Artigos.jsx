@@ -4,6 +4,7 @@ import {
 } from "react";
 
 import axios from "axios";
+import { API_URL } from "../../config/api";
 import {
   FaSearch,
   FaEye,
@@ -108,7 +109,7 @@ export default function Artigos() {
       try {
         const response =
           await axios.get(
-            "http://localhost:5000/artigos"
+            `${API_URL}/artigos`
           );
 
         setArtigos(
@@ -138,11 +139,11 @@ export default function Artigos() {
         formData.append("imagem", imagemFile);
       }
 
-      await axios.post("http://localhost:5000/artigos", formData);
+      await axios.post(`${API_URL}/artigos`, formData);
 
       const response =
         await axios.get(
-          "http://localhost:5000/artigos"
+          `${API_URL}/artigos`
         );
 
       setArtigos(
@@ -176,7 +177,7 @@ export default function Artigos() {
   async function apagarArtigo() {
     try {
       await axios.delete(
-        `http://localhost:5000/artigos/${artigoApagar.id}`
+        `${API_URL}/artigos/${artigoApagar.id}`
       );
 
       setArtigos(
@@ -210,13 +211,13 @@ export default function Artigos() {
       }
 
       await axios.put(
-        `http://localhost:5000/artigos/${artigoEditar.id}`,
+        `${API_URL}/artigos/${artigoEditar.id}`,
         formData
       );
 
       const response =
         await axios.get(
-          "http://localhost:5000/artigos"
+          `${API_URL}/artigos`
         );
 
       setArtigos(
@@ -1442,7 +1443,7 @@ export default function Artigos() {
                 </div>
               )
             )}
-          </div>
+      </div>
 
       {mostrarApagar && (
         <div

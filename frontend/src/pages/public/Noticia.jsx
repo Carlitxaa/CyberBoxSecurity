@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import "./Noticias.css";
+import { API_URL } from "../../config/api";
 
 import logo from "../../assets/logo.png";
 
@@ -16,7 +17,7 @@ export default function Noticia() {
     const fetchArtigo = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`http://localhost:5000/artigos/${id}`);
+        const res = await axios.get(`${API_URL}/artigos/${id}`);
         setArtigo(res.data);
       } catch (err) {
         setError("Artigo não encontrado ou não publicado.");
@@ -32,7 +33,7 @@ export default function Noticia() {
     if (!artigo) return null;
     if (artigo.imagem) {
       if (artigo.imagem.startsWith("http")) return artigo.imagem;
-      return `http://localhost:5000${artigo.imagem}`;
+      return `${API_URL}${artigo.imagem}`;
     }
     return null;
   };
@@ -43,7 +44,7 @@ export default function Noticia() {
       if (artigo[f]) {
         try {
           return new Date(artigo[f]).toLocaleDateString("pt-PT");
-        } catch (e) {}
+        } catch (e) { }
       }
     }
     return "";

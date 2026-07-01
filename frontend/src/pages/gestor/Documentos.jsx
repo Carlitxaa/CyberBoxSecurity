@@ -5,6 +5,7 @@ import {
 } from "react";
 
 import axios from "axios";
+import { API_URL } from "../../config/api";
 import {
   FaSearch,
   FaPlus,
@@ -71,12 +72,12 @@ export default function Documentos() {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/documentos")
+    axios.get(`${API_URL}/documentos`)
       .then((response) => {
         setDocumentos(response.data);
         axios
           .get(
-            "http://localhost:5000/utilizadores"
+            `${API_URL}/utilizadores`
           )
           .then(
             (response) => {
@@ -155,13 +156,13 @@ export default function Documentos() {
       );
 
       await axios.post(
-        "http://localhost:5000/documentos",
+        `${API_URL}/documentos`,
         formData
       );
 
       const response =
         await axios.get(
-          "http://localhost:5000/documentos"
+          `${API_URL}/documentos`
         );
 
       setDocumentos(
@@ -198,10 +199,10 @@ export default function Documentos() {
 
     try {
       const response = await axios.get(
-        `http://localhost:5000/documentos/${doc.id}/download`,
+        `${API_URL}/documentos/${doc.id}/download`,
         { responseType: "blob" }
       );
-      await axios.put(`http://localhost:5000/documentos/${doc.id}/download`);
+      await axios.put(`${API_URL}/documentos/${doc.id}/download`);
 
       const blob = new Blob([response.data]);
       const url = window.URL.createObjectURL(blob);
@@ -217,7 +218,7 @@ export default function Documentos() {
       alert("Erro ao descarregar o ficheiro.");
     }
 
-    const atualizar = await axios.get("http://localhost:5000/documentos");
+    const atualizar = await axios.get(`${API_URL}/documentos`);
     setDocumentos(atualizar.data);
 
   }
@@ -988,7 +989,7 @@ export default function Documentos() {
           )
         )}
       </div>
-       {/* PAGINAÇÃO */}
+      {/* PAGINAÇÃO */}
       <div className="d-flex justify-content-between align-items-center mt-4">
         <p
           style={{

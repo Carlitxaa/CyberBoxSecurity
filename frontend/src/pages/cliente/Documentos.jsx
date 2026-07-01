@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_URL } from "../../config/api";
 import { FaSearch, FaDownload, FaFilePdf, FaTrash, FaPlus, FaUpload, FaTimes } from "react-icons/fa";
 import { getCurrentUser } from "../../utils/auth";
 
@@ -26,7 +27,7 @@ export default function Documentos() {
 
   useEffect(() => {
     if (!currentUser) return;
-    axios.get("http://localhost:5000/documentos", { params: { cliente: currentUser.empresa } })
+    axios.get(`${API_URL}/documentos`, { params: { cliente: currentUser.empresa } })
       .then((response) => setDocumentos(response.data))
       .catch((error) => console.error("Erro ao buscar documentos:", error));
   }, [currentUser]);
@@ -53,7 +54,7 @@ export default function Documentos() {
       formData.append("enviado_por", currentUser.nome);
       formData.append("ficheiro", ficheiro);
 
-      await axios.post("http://localhost:5000/documentos", formData, {
+      await axios.post(`${API_URL}/documentos`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -62,7 +63,7 @@ export default function Documentos() {
       setFicheiro(null);
       setMostrarModal(false);
 
-      const response = await axios.get("http://localhost:5000/documentos", {
+      const response = await axios.get(`${API_URL}/documentos`, {
         params: { cliente: currentUser.empresa },
       });
       setDocumentos(response.data);
@@ -78,8 +79,8 @@ export default function Documentos() {
       return;
     }
     try {
-      const response = await axios.get(`http://localhost:5000/documentos/${doc.id}/download`, { responseType: "blob" });
-      await axios.put(`http://localhost:5000/documentos/${doc.id}/download`);
+      const response = await axios.get(`${API_URL}/documentos/${doc.id}/download`, { responseType: "blob" });
+      await axios.put(`${API_URL}/documentos/${doc.id}/download`);
       const blob = new Blob([response.data]);
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -98,7 +99,7 @@ export default function Documentos() {
 
   async function apagarDocumento(id) {
     try {
-      await axios.delete(`http://localhost:5000/documentos/${id}`);
+      await axios.delete(`${API_URL}/documentos/${id}`);
       setDocumentos(documentos.filter((doc) => doc.id !== id));
     } catch (error) {
       console.log(error);
@@ -306,7 +307,7 @@ export default function Documentos() {
         </div>
       )}
 
-     {/* PAGINAÇÃO */}
+      {/* PAGINAÇÃO */}
       <div className="d-flex justify-content-between align-items-center mt-4">
         <p
           style={{

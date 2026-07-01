@@ -11,6 +11,7 @@ import {
 } from "react";
 
 import axios from "axios";
+import { API_URL } from "../../config/api";
 
 export default function Dashboard() {
   const [
@@ -36,7 +37,7 @@ export default function Dashboard() {
       try {
         const response =
           await axios.get(
-            "http://localhost:5000/utilizadores"
+            `${API_URL}/utilizadores`
           );
 
         setUtilizadores(
@@ -58,7 +59,7 @@ export default function Dashboard() {
       try {
         const response =
           await axios.get(
-            "http://localhost:5000/dashboard/atividade-recente"
+            `${API_URL}/dashboard/atividade-recente`
           );
 
         setAtividadeRecente(
@@ -80,7 +81,7 @@ export default function Dashboard() {
       try {
         const response =
           await axios.get(
-            "http://localhost:5000/dashboard/estado-sistema"
+            `${API_URL}/dashboard/estado-sistema`
           );
 
         setEstadoSistema(
@@ -257,68 +258,68 @@ export default function Dashboard() {
                   FaShieldAlt: <FaShieldAlt />,
                 };
                 return (
-                <div
-                  key={index}
-                  style={{
-                    background:
-                      "white",
-                    borderRadius:
-                      "20px",
-                    padding:
-                      "18px",
-                    marginBottom:
-                      "15px",
-                    display:
-                      "flex",
-                    alignItems:
-                      "center",
-                    gap: "15px",
-                  }}
-                >
                   <div
+                    key={index}
                     style={{
-                      width:
-                        "50px",
-                      height:
-                        "50px",
                       background:
-                        item.color,
+                        "white",
                       borderRadius:
+                        "20px",
+                      padding:
                         "18px",
+                      marginBottom:
+                        "15px",
                       display:
                         "flex",
                       alignItems:
                         "center",
-                      justifyContent:
-                        "center",
-                      fontSize:
-                        "18px",
+                      gap: "15px",
                     }}
                   >
-                    {iconMap[item.icon]}
-                  </div>
-
-                  <div>
-                    <h6
+                    <div
                       style={{
-                        margin: 0,
-                        fontWeight:
-                          "600",
+                        width:
+                          "50px",
+                        height:
+                          "50px",
+                        background:
+                          item.color,
+                        borderRadius:
+                          "18px",
+                        display:
+                          "flex",
+                        alignItems:
+                          "center",
+                        justifyContent:
+                          "center",
+                        fontSize:
+                          "18px",
                       }}
                     >
-                      {item.titulo}
-                    </h6>
+                      {iconMap[item.icon]}
+                    </div>
 
-                    <small
-                      style={{
-                        color:
-                          "#7d7d7d",
-                      }}
-                    >
-                      {item.descricao}
-                    </small>
+                    <div>
+                      <h6
+                        style={{
+                          margin: 0,
+                          fontWeight:
+                            "600",
+                        }}
+                      >
+                        {item.titulo}
+                      </h6>
+
+                      <small
+                        style={{
+                          color:
+                            "#7d7d7d",
+                        }}
+                      >
+                        {item.descricao}
+                      </small>
+                    </div>
                   </div>
-                </div>
                 );
               }
             )}
@@ -352,89 +353,89 @@ export default function Dashboard() {
             </h2>
 
             {utilizadores
-    .slice(-4)
-                  .reverse()
-                  .map(
-                    (
-                      user,
-                      index
-                    ) => (
-                      <div
-                        key={index}
+              .slice(-4)
+              .reverse()
+              .map(
+                (
+                  user,
+                  index
+                ) => (
+                  <div
+                    key={index}
+                    style={{
+                      background:
+                        "white",
+                      borderRadius:
+                        "20px",
+                      padding:
+                        "18px",
+                      marginBottom:
+                        "15px",
+                      display:
+                        "flex",
+                      alignItems:
+                        "center",
+                      gap: "15px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width:
+                          "50px",
+                        height:
+                          "50px",
+                        borderRadius:
+                          "50%",
+                        background:
+                          "#DDF6FB",
+                        display:
+                          "flex",
+                        alignItems:
+                          "center",
+                        justifyContent:
+                          "center",
+                        fontWeight:
+                          "700",
+                        color:
+                          "#12C4EB",
+                      }}
+                    >
+                      {
+                        user.nome?.charAt(
+                          0
+                        )
+                      }
+                    </div>
+
+                    <div>
+                      <h6
                         style={{
-                          background:
-                            "white",
-                          borderRadius:
-                            "20px",
-                          padding:
-                            "18px",
-                          marginBottom:
-                            "15px",
-                          display:
-                            "flex",
-                          alignItems:
-                            "center",
-                          gap: "15px",
+                          margin: 0,
+                          fontWeight:
+                            "600",
                         }}
                       >
-                        <div
-                          style={{
-                            width:
-                              "50px",
-                            height:
-                              "50px",
-                            borderRadius:
-                              "50%",
-                            background:
-                              "#DDF6FB",
-                            display:
-                              "flex",
-                            alignItems:
-                              "center",
-                            justifyContent:
-                              "center",
-                            fontWeight:
-                              "700",
-                            color:
-                              "#12C4EB",
-                          }}
-                        >
-                          {
-                            user.nome?.charAt(
-                              0
-                            )
-                          }
-                        </div>
+                        {
+                          user.nome
+                        }
+                      </h6>
 
-                        <div>
-                          <h6
-                            style={{
-                              margin: 0,
-                              fontWeight:
-                                "600",
-                            }}
-                          >
-                            {
-                              user.nome
-                            }
-                          </h6>
+                      <small
+                        style={{
+                          color:
+                            "#7d7d7d",
+                        }}
+                      >
+                        {
+                          user.email
+                        }
+                      </small>
+                    </div>
+                  </div>
+                )
+              )
+            }
 
-                          <small
-                            style={{
-                              color:
-                                "#7d7d7d",
-                            }}
-                          >
-                            {
-                              user.email
-                            }
-                          </small>
-                        </div>
-                      </div>
-                    )
-                  )
-              }
-                
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./Noticias.css";
+import { API_URL } from "../../config/api";
 
 import logo from "../../assets/logo.png";
 import hero from "../../assets/hero.png";
@@ -17,7 +18,7 @@ function Noticias() {
       if (artigo.imagem.startsWith("http")) {
         return artigo.imagem;
       }
-      return `http://localhost:5000${artigo.imagem}`;
+      return `${API_URL}${artigo.imagem}`;
     }
     return hero;
   };
@@ -25,7 +26,7 @@ function Noticias() {
   useEffect(() => {
     const fetchArtigos = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/artigos");
+        const response = await axios.get(`${API_URL}/artigos`);
         setArtigos(response.data);
       } catch (error) {
         console.error("Erro ao carregar artigos:", error);
@@ -62,7 +63,7 @@ function Noticias() {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/newsletter", {
+      const response = await axios.post(`${API_URL}/newsletter`, {
         email: email.trim(),
       });
 

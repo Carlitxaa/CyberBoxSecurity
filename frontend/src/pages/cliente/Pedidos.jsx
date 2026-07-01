@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_URL } from "../../config/api";
 import {
   FaSearch,
   FaEye,
@@ -40,7 +41,7 @@ export default function Pedidos() {
 
     (async () => {
       try {
-        const response = await axios.get("http://localhost:5000/pedidos", {
+        const response = await axios.get(`${API_URL}/pedidos`, {
           params: { cliente: currentUser.empresa },
         });
         setPedidos(response.data);
@@ -52,7 +53,7 @@ export default function Pedidos() {
 
   async function buscarPedidos() {
     try {
-      const response = await axios.get("http://localhost:5000/pedidos", {
+      const response = await axios.get(`${API_URL}/pedidos`, {
         params: { cliente: currentUser.empresa },
       });
       setPedidos(response.data);
@@ -83,7 +84,7 @@ export default function Pedidos() {
       formData.append("historico_respostas", JSON.stringify([]));
       formData.append("ficheiro", ficheiro);
 
-      await axios.post("http://localhost:5000/pedidos", formData, {
+      await axios.post(`${API_URL}/pedidos`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setNovoPedido({ titulo: "", categoria: "", descricao: "" });
