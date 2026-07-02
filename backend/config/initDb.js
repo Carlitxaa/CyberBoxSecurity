@@ -1,4 +1,67 @@
+const bcrypt = require("bcrypt");
 const db = require("./db");
+
+async function ensureAdminUser() {
+  const adminEmail =
+    process.env.ADMIN_EMAIL || "admin@cyberbox.pt";
+  const adminPassword =
+    process.env.ADMIN_PASSWORD || "Admin123!";
+  const adminName =
+    process.env.ADMIN_NAME || "Administrador";
+  const adminCompany =
+    process.env.ADMIN_COMPANY || "CyberBoxSecurity";
+
+  const passwordHash = await bcrypt.hash(adminPassword, 10);
+
+  const existingAdmin = await db.query(
+    "SELECT id FROM utilizadores WHERE email = $1 LIMIT 1",
+    [adminEmail]
+  );
+
+  if (existingAdmin.rowCount === 0) {
+    await db.query(
+      `
+      INSERT INTO utilizadores
+      (
+        nome,
+        email,
+        password,
+        empresa,
+        tipo,
+        estado
+      )
+      VALUES
+      (
+        $1,
+        $2,
+        $3,
+        $4,
+        'Administrador',
+        'Ativo'
+      )
+      `,
+      [
+        adminName,
+        adminEmail,
+        passwordHash,
+        adminCompany,
+      ]
+    );
+
+    return;
+  }
+
+  await db.query(
+    `
+    UPDATE utilizadores
+    SET
+      tipo = 'Administrador',
+      estado = 'Ativo'
+    WHERE email = $1
+    `,
+    [adminEmail]
+  );
+}
 
 async function initializeDatabase() {
   await db.query(`
@@ -105,6 +168,8 @@ async function initializeDatabase() {
 
   await db.query("ALTER TABLE newsletter ADD COLUMN IF NOT EXISTS email VARCHAR(255)");
   await db.query("ALTER TABLE newsletter ADD COLUMN IF NOT EXISTS data_subscricao TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+
+  await ensureAdminUser();
 }
 
 module.exports = initializeDatabase;

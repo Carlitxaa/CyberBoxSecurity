@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "dump:db": "pg_dump -d cybersecurity_platform -f ../cybersecurity_platform_dump.sql"
   },
   "keywords": [],
   "author": "",
