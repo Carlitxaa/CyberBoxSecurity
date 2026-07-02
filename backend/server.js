@@ -42,6 +42,11 @@ const dashboardRoutes =
     "./routes/dashboardRoutes"
   );
 
+const initializeDatabase =
+  require(
+    "./config/initDb"
+  );
+
 const app =
   express();
 
@@ -138,9 +143,21 @@ app.get(
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Servidor a correr na porta ${PORT}`);
-});
+async function startServer() {
+  try {
+    await initializeDatabase();
+    console.log("Base de dados inicializada");
+
+    app.listen(PORT, () => {
+      console.log(`Servidor a correr na porta ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Erro ao inicializar a base de dados:", error);
+    process.exit(1);
+  }
+}
+
+startServer();
 
 app.use(
   "/uploads",
