@@ -83,7 +83,7 @@ router.get(
 
 router.post(
     "/",
-    authorizeRoles("Administrador", "Gestor"),
+    authorizeRoles("Administrador", "Gestor", "Cliente"),
     upload.single(
         "ficheiro"
     ),

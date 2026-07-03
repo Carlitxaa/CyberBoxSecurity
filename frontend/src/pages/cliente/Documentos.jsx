@@ -2,7 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../../config/api";
-import { FaSearch, FaDownload, FaFilePdf, FaTrash, FaPlus, FaUpload, FaTimes } from "react-icons/fa";
+import { FaSearch, FaDownload, FaFilePdf, FaPlus, FaUpload, FaTimes } from "react-icons/fa";
 import { getCurrentUser } from "../../utils/auth";
 
 export default function Documentos() {
@@ -94,16 +94,6 @@ export default function Documentos() {
     } catch (error) {
       console.error("Erro ao baixar ficheiro:", error);
       alert("Erro ao descarregar o ficheiro.");
-    }
-  }
-
-  async function apagarDocumento(id) {
-    try {
-      await axios.delete(`${API_URL}/documentos/${id}`);
-      setDocumentos(documentos.filter((doc) => doc.id !== id));
-    } catch (error) {
-      console.log(error);
-      alert("Erro ao apagar documento");
     }
   }
 
@@ -291,9 +281,6 @@ export default function Documentos() {
               <div className="d-flex gap-2 mt-3">
                 <button className="btn flex-grow-1" style={{ background: "#12C4EB", color: "white", borderRadius: "30px" }} onClick={() => baixarDocumento(doc)}>
                   <FaDownload className="me-2" /> Download
-                </button>
-                <button className="btn text-danger" onClick={() => apagarDocumento(doc.id)}>
-                  <FaTrash />
                 </button>
               </div>
             </div>

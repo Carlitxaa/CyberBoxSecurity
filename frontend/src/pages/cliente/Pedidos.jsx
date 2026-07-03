@@ -246,74 +246,133 @@ export default function Pedidos() {
 
       {/* FORMULÁRIO NOVO PEDIDO */}
       {mostrarFormulario && (
-        <div style={{ background: "white", borderRadius: "30px", padding: "28px", marginBottom: "30px", border: "2px solid #12C4EB" }}>
+        <div
+          style={{
+            background: "#DDF6FB",
+            border: "2px solid #12C4EB",
+            borderRadius: "35px",
+            padding: "30px",
+            marginBottom: "30px",
+          }}
+        >
           <h4 style={{ fontWeight: "700", marginBottom: "20px" }}>Criar novo pedido</h4>
           <form onSubmit={criarPedido}>
-            <div className="row g-3">
-              <div className="col-md-6">
-                <label className="form-label">Título</label>
+            <div className="row">
+              <div className="col-md-6 mb-3">
+                <label>Título</label>
                 <input
                   type="text"
                   className="form-control"
                   placeholder="Título do pedido"
                   value={novoPedido.titulo}
                   onChange={(e) => setNovoPedido((prev) => ({ ...prev, titulo: e.target.value }))}
-                  style={{ border: "2px solid #12C4EB" }}
+                  style={{
+                    borderRadius: "30px",
+                    border: "2px solid #12C4EB",
+                    padding: "12px 20px",
+                    background: "white",
+                  }}
                 />
               </div>
-              <div className="col-md-6">
-                <label className="form-label">Categoria</label>
+              <div className="col-md-6 mb-3">
+                <label>Categoria</label>
                 <select
                   className="form-select"
                   value={novoPedido.categoria}
                   onChange={(e) => setNovoPedido((prev) => ({ ...prev, categoria: e.target.value }))}
-                  style={{ border: "2px solid #12C4EB" }}
+                  style={{
+                    border: "2px solid #12C4EB",
+                    borderRadius: "30px",
+                    background: "white",
+                    padding: "12px 20px",
+                  }}
                 >
-                  <option value="">Selecione</option>
+                  <option value="">Selecionar</option>
                   <option value="Suporte">Suporte</option>
                   <option value="Relatório">Relatório</option>
                   <option value="Outro">Outro</option>
                 </select>
               </div>
-              <div className="col-12">
-                <label className="form-label">Descrição</label>
-                <textarea
-                  className="form-control"
-                  rows={4}
-                  placeholder="Descreva sua solicitação"
-                  value={novoPedido.descricao}
-                  onChange={(e) => setNovoPedido((prev) => ({ ...prev, descricao: e.target.value }))}
-                  style={{ border: "2px solid #12C4EB" }}
-                />
-              </div>
-              <div className="col-12">
-                <label className="form-label">Ficheiro</label>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".pdf,.doc,.docx,.xlsx,image/*"
-                  style={{ display: "none" }}
-                  onChange={handleFileChange}
-                />
-                <div
-                  onClick={openFilePicker}
-                  style={{
-                    border: "2px dashed #D5DCE6",
-                    borderRadius: "15px",
-                    padding: "20px",
-                    cursor: "pointer",
-                    textAlign: "center",
-                  }}
-                >
-                  <p style={{ margin: 0, fontWeight: "500" }}>Clique para selecionar um ficheiro</p>
-                  <small style={{ color: "#64748B" }}>PDF, DOCX, XLSX ou imagem</small>
-                  {ficheiro && <p style={{ marginTop: "10px", color: "#0B4A5A", fontWeight: "600" }}>Selecionado: {ficheiro.name}</p>}
-                </div>
+            </div>
+
+            <div className="mb-3">
+              <label>Descrição</label>
+              <textarea
+                className="form-control"
+                rows={5}
+                placeholder="Detalhes do pedido"
+                value={novoPedido.descricao}
+                onChange={(e) => setNovoPedido((prev) => ({ ...prev, descricao: e.target.value }))}
+                style={{
+                  border: "2px solid #12C4EB",
+                  borderRadius: "30px",
+                  padding: "20px",
+                  background: "white",
+                  minHeight: "170px",
+                }}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label>Ficheiro</label>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.doc,.docx,.xlsx,image/*"
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+              <div
+                onClick={openFilePicker}
+                style={{
+                  border: "2px dashed #12C4EB",
+                  borderRadius: "30px",
+                  padding: "22px",
+                  cursor: "pointer",
+                  textAlign: "center",
+                  background: "white",
+                }}
+              >
+                <p style={{ margin: 0, fontWeight: "600" }}>Clique para selecionar um ficheiro</p>
+                <small style={{ color: "#64748B" }}>PDF, DOCX, XLSX ou imagem</small>
+                {ficheiro && (
+                  <p style={{ marginTop: "10px", marginBottom: 0, color: "#0B4A5A", fontWeight: "600" }}>
+                    Selecionado: {ficheiro.name}
+                  </p>
+                )}
               </div>
             </div>
-            <button className="btn text-white mt-3" type="submit" style={{ background: "#12C4EB", borderRadius: "12px", fontWeight: "600", padding: "12px 30px" }}>
-              Enviar Pedido
-            </button>
+
+            <div className="d-flex gap-3">
+              <button
+                className="btn"
+                type="submit"
+                style={{
+                  background: "#12C4EB",
+                  color: "white",
+                  borderRadius: "30px",
+                  padding: "12px 30px",
+                  fontWeight: "600",
+                }}
+              >
+                Enviar Pedido
+              </button>
+
+              <button
+                className="btn"
+                type="button"
+                style={{
+                  background: "#6B7280",
+                  color: "white",
+                  borderRadius: "30px",
+                  padding: "12px 30px",
+                  fontWeight: "600",
+                }}
+                onClick={() => setMostrarFormulario(false)}
+              >
+                Cancelar
+              </button>
+            </div>
           </form>
         </div>
       )}
