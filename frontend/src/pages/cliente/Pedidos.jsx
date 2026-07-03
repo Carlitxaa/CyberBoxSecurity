@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../../config/api";
@@ -24,8 +24,6 @@ export default function Pedidos() {
     categoria: "",
     descricao: "",
   });
-  const [ficheiro, setFicheiro] = useState(null);
-  const fileInputRef = useRef(null);
   const [mostrarRespostas, setMostrarRespostas] = useState(false);
   const [filtroPesquisa, setFiltroPesquisa] = useState("");
   const [filtroCategoria, setFiltroCategoria] = useState("");
@@ -68,41 +66,25 @@ export default function Pedidos() {
       alert("Preencha todos os campos.");
       return;
     }
-    if (!ficheiro) {
-      alert("Por favor selecione uma imagem ou outro ficheiro para o pedido.");
-      return;
-    }
-    try {
-      const formData = new FormData();
-      formData.append("titulo", novoPedido.titulo);
-      formData.append("categoria", novoPedido.categoria);
-      formData.append("prioridade", "Normal");
-      formData.append("estado", "Pendente");
-      formData.append("descricao", novoPedido.descricao);
-      formData.append("cliente", currentUser.empresa);
-      formData.append("respostas", 0);
-      formData.append("historico_respostas", JSON.stringify([]));
-      formData.append("ficheiro", ficheiro);
 
-      await axios.post(`${API_URL}/pedidos`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+    try {
+      await axios.post(`${API_URL}/pedidos`, {
+        titulo: novoPedido.titulo,
+        categoria: novoPedido.categoria,
+        prioridade: "Normal",
+        estado: "Pendente",
+        descricao: novoPedido.descricao,
+        cliente: currentUser.empresa,
+        respostas: 0,
+        historico_respostas: [],
       });
       setNovoPedido({ titulo: "", categoria: "", descricao: "" });
-      setFicheiro(null);
       setMostrarFormulario(false);
       buscarPedidos();
     } catch (error) {
       console.error("Erro ao criar pedido:", error);
       alert("Não foi possível enviar o pedido.");
     }
-  }
-
-  function openFilePicker() {
-    fileInputRef.current?.click();
-  }
-
-  function handleFileChange(e) {
-    setFicheiro(e.target.files?.[0] || null);
   }
 
   function handleVerPedido(pedido) {
@@ -313,36 +295,6 @@ export default function Pedidos() {
               />
             </div>
 
-            <div className="mb-3">
-              <label>Ficheiro</label>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".pdf,.doc,.docx,.xlsx,image/*"
-                style={{ display: "none" }}
-                onChange={handleFileChange}
-              />
-              <div
-                onClick={openFilePicker}
-                style={{
-                  border: "2px dashed #12C4EB",
-                  borderRadius: "30px",
-                  padding: "22px",
-                  cursor: "pointer",
-                  textAlign: "center",
-                  background: "white",
-                }}
-              >
-                <p style={{ margin: 0, fontWeight: "600" }}>Clique para selecionar um ficheiro</p>
-                <small style={{ color: "#64748B" }}>PDF, DOCX, XLSX ou imagem</small>
-                {ficheiro && (
-                  <p style={{ marginTop: "10px", marginBottom: 0, color: "#0B4A5A", fontWeight: "600" }}>
-                    Selecionado: {ficheiro.name}
-                  </p>
-                )}
-              </div>
-            </div>
-
             <div className="d-flex gap-3">
               <button
                 className="btn"
@@ -506,3 +458,4 @@ export default function Pedidos() {
     </div>
   );
 }
+
