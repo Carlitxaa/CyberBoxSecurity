@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { API_URL } from "../../config/api";
 import {
   FaSearch,
   FaEye,
@@ -41,7 +42,7 @@ export default function Pedidos() {
 
   async function buscarPedidos() {
     try {
-      const response = await axios.get("http://localhost:5000/pedidos");
+      const response = await axios.get(`${API_URL}/pedidos`);
       setPedidos(response.data);
     } catch (error) {
       console.error("Erro ao buscar pedidos:", error);
@@ -54,7 +55,7 @@ export default function Pedidos() {
     }
 
     try {
-      await axios.post("http://localhost:5000/pedidos", novoPedido);
+      await axios.post(`${API_URL}/pedidos`, novoPedido);
       buscarPedidos();
 
       setNovoPedido({
@@ -75,7 +76,7 @@ export default function Pedidos() {
   async function editarPedido(id, dadosAtualizados) {
     try {
       const response = await axios.put(
-        `http://localhost:5000/pedidos/${id}`,
+        `${API_URL}/pedidos/${id}`,
         dadosAtualizados
       );
       buscarPedidos();
@@ -88,7 +89,7 @@ export default function Pedidos() {
 
   async function apagarPedido(id) {
     try {
-      await axios.delete(`http://localhost:5000/pedidos/${id}`);
+      await axios.delete(`${API_URL}/pedidos/${id}`);
       setMostrarApagar(false);
       buscarPedidos();
     } catch (error) {
@@ -1656,3 +1657,5 @@ export default function Pedidos() {
     </div>
   );
 }
+
+

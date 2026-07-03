@@ -11,6 +11,7 @@ import {
 } from "react";
 
 import axios from "axios";
+import { API_URL } from "../../config/api";
 
 export default function Dashboard() {
   const [
@@ -36,7 +37,7 @@ export default function Dashboard() {
       try {
         const response =
           await axios.get(
-            "http://localhost:5000/utilizadores"
+            `${API_URL}/utilizadores`
           );
 
         setUtilizadores(
@@ -58,7 +59,7 @@ export default function Dashboard() {
       try {
         const response =
           await axios.get(
-            "http://localhost:5000/dashboard/atividade-recente"
+            `${API_URL}/dashboard/atividade-recente`
           );
 
         setAtividadeRecente(
@@ -80,7 +81,7 @@ export default function Dashboard() {
       try {
         const response =
           await axios.get(
-            "http://localhost:5000/dashboard/estado-sistema"
+            `${API_URL}/dashboard/estado-sistema`
           );
 
         setEstadoSistema(
@@ -538,3 +539,4 @@ export default function Dashboard() {
     </div>
   );
 }
+

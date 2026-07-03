@@ -14,6 +14,7 @@ import {
 } from "react-icons/fa";
 
 import axios from "axios";
+import { API_URL } from "../../config/api";
 
 export default function Utilizadores() {
   const [
@@ -96,7 +97,7 @@ export default function Utilizadores() {
   async function buscarUtilizadores() {
     try {
       const response = await axios.get(
-        "http://localhost:5000/utilizadores"
+        `${API_URL}/utilizadores`
       );
 
       setUtilizadores(response.data);
@@ -120,7 +121,7 @@ export default function Utilizadores() {
 
     try {
       await axios.post(
-        "http://localhost:5000/utilizadores",
+        `${API_URL}/utilizadores`,
         novoUtilizador
       );
 
@@ -149,7 +150,7 @@ export default function Utilizadores() {
   async function apagarUtilizador() {
     try {
       await axios.delete(
-        `http://localhost:5000/utilizadores/${utilizadorSelecionado}`
+        `${API_URL}/utilizadores/${utilizadorSelecionado}`
       );
 
       buscarUtilizadores();
@@ -172,7 +173,7 @@ export default function Utilizadores() {
   async function editarUtilizador() {
     try {
       await axios.put(
-        `http://localhost:5000/utilizadores/${utilizadorSelecionado}`,
+        `${API_URL}/utilizadores/${utilizadorSelecionado}`,
         utilizadorEditar
       );
 
@@ -1599,4 +1600,6 @@ export default function Utilizadores() {
     </div>
   );
 }
+
+
 
