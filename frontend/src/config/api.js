@@ -1,5 +1,7 @@
-// URL base da API — usa variável de ambiente em produção (Render)
-// ou localhost em desenvolvimento local
+const renderApiUrl = "https://cyberboxsecurity-2.onrender.com";
+const configuredApiUrl = import.meta.env.VITE_API_URL;
+
 export const API_URL =
-  import.meta.env.VITE_API_URL ||
-  "https://cyberboxsecurity-2.onrender.com";
+  configuredApiUrl && !configuredApiUrl.includes("localhost")
+    ? configuredApiUrl
+    : renderApiUrl;
