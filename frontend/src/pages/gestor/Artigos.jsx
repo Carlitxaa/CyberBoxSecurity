@@ -5,6 +5,11 @@ import {
 
 import axios from "axios";
 import { API_URL } from "../../config/api";
+import DynamicMetadataFields from "../../components/DynamicMetadataFields";
+import {
+  artigoCamposPorCategoria,
+  categoriasGestao,
+} from "../../config/dynamicFields";
 import {
   FaSearch,
   FaEye,
@@ -96,12 +101,13 @@ export default function Artigos() {
   ] = useState({
     titulo: "",
     categoria:
-      "Segurança",
+      "Relatórios",
     autor: "",
     conteudo: "",
     estado:
       "Publicado",
     imagem: "",
+    metadados: {},
   });
 
   useEffect(() => {
@@ -135,6 +141,7 @@ export default function Artigos() {
       formData.append("conteudo", novoArtigo.conteudo);
       formData.append("estado", novoArtigo.estado);
       formData.append("imagem_url", imagemUrl || "");
+      formData.append("metadados", JSON.stringify(novoArtigo.metadados || {}));
       if (imagemFile) {
         formData.append("imagem", imagemFile);
       }
@@ -157,12 +164,13 @@ export default function Artigos() {
       setNovoArtigo({
         titulo: "",
         categoria:
-          "Segurança",
+          "Relatórios",
         autor: "",
         conteudo: "",
         estado:
           "Publicado",
         imagem: "",
+        metadados: {},
       });
       setImagemUrl("");
       setImagemFile(null);
@@ -202,6 +210,7 @@ export default function Artigos() {
       formData.append("autor", artigoEditar.autor);
       formData.append("conteudo", artigoEditar.conteudo);
       formData.append("estado", artigoEditar.estado);
+      formData.append("metadados", JSON.stringify(artigoEditar.metadados || {}));
       formData.append(
         "imagem_url",
         imagemEditarUrl || artigoEditar.imagem || ""
@@ -568,10 +577,11 @@ export default function Artigos() {
                       })
                     }
                   >
-                    <option>Segurança</option>
-                    <option>Compliance</option>
-                    <option>Cloud</option>
-                    <option>Arquitetura</option>
+                    {categoriasGestao.map((categoriaItem) => (
+                      <option key={categoriaItem} value={categoriaItem}>
+                        {categoriaItem}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -595,6 +605,18 @@ export default function Artigos() {
                   </select>
                 </div>
               </div>
+
+              <DynamicMetadataFields
+                categoria={artigoEditar?.categoria}
+                fieldsByCategory={artigoCamposPorCategoria}
+                value={artigoEditar?.metadados}
+                onChange={(metadados) =>
+                  setArtigoEditar({
+                    ...artigoEditar,
+                    metadados,
+                  })
+                }
+              />
 
               <div className="mt-3">
                 <label>
@@ -951,23 +973,33 @@ export default function Artigos() {
                     "12px 20px",
                 }}
               >
-                <option>
-                  Segurança
-                </option>
-
-                <option>
-                  Compliance
-                </option>
-
-                <option>
-                  Cloud
-                </option>
-
-                <option>
-                  Arquitetura
-                </option>
+                {categoriasGestao.map((categoriaItem) => (
+                  <option key={categoriaItem} value={categoriaItem}>
+                    {categoriaItem}
+                  </option>
+                ))}
               </select>
             </div>
+
+            <DynamicMetadataFields
+              categoria={novoArtigo.categoria}
+              fieldsByCategory={artigoCamposPorCategoria}
+              value={novoArtigo.metadados}
+              onChange={(metadados) =>
+                setNovoArtigo({
+                  ...novoArtigo,
+                  metadados,
+                })
+              }
+              inputStyle={{
+                borderRadius:
+                  "30px",
+                border:
+                  "2px solid #12C4EB",
+                padding:
+                  "12px 20px",
+              }}
+            />
 
             <div className="col-md-6 mb-3">
               <label>
@@ -1158,21 +1190,11 @@ export default function Artigos() {
                 Todas as Categorias
               </option>
 
-              <option value="Segurança">
-                Segurança
-              </option>
-
-              <option value="Compliance">
-                Compliance
-              </option>
-
-              <option value="Cloud">
-                Cloud
-              </option>
-
-              <option value="Arquitetura">
-                Arquitetura
-              </option>
+              {categoriasGestao.map((categoriaItem) => (
+                <option key={categoriaItem} value={categoriaItem}>
+                  {categoriaItem}
+                </option>
+              ))}
             </select>
           </div>
 

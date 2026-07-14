@@ -14,7 +14,7 @@ router.get(
   async (req, res) => {
     try {
       const result = await db.query(
-        `SELECT id, nome, email, empresa, tipo, estado, data_criacao FROM utilizadores ORDER BY id ASC`
+        `SELECT id, nome, email, empresa, telefone, responsavel_seguranca, email_responsavel, contacto_permanente, email_contacto_permanente, tipo, estado, data_criacao FROM utilizadores ORDER BY id ASC`
       );
 
       res.json(result.rows);
@@ -30,7 +30,19 @@ router.post(
   authorizeRoles("Administrador", "Gestor"),
   async (req, res) => {
     try {
-      const { nome, email, password, empresa, tipo, estado } = req.body;
+      const {
+        nome,
+        email,
+        password,
+        empresa,
+        telefone,
+        responsavel_seguranca,
+        email_responsavel,
+        contacto_permanente,
+        email_contacto_permanente,
+        tipo,
+        estado,
+      } = req.body;
 
       if (!nome || !email || !password || !empresa || !tipo || !estado) {
         return res.status(400).json({ error: "Todos os campos são obrigatórios" });
@@ -46,14 +58,31 @@ router.post(
             email,
             password,
             empresa,
+            telefone,
+            responsavel_seguranca,
+            email_responsavel,
+            contacto_permanente,
+            email_contacto_permanente,
             tipo,
             estado
           )
           VALUES
-          ($1, $2, $3, $4, $5, $6)
-          RETURNING id, nome, email, empresa, tipo, estado, data_criacao
+          ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+          RETURNING id, nome, email, empresa, telefone, responsavel_seguranca, email_responsavel, contacto_permanente, email_contacto_permanente, tipo, estado, data_criacao
           `,
-        [nome, email, passwordHash, empresa, tipo, estado]
+        [
+          nome,
+          email,
+          passwordHash,
+          empresa,
+          telefone || null,
+          responsavel_seguranca || null,
+          email_responsavel || null,
+          contacto_permanente || null,
+          email_contacto_permanente || null,
+          tipo,
+          estado,
+        ]
       );
 
       res.status(201).json(result.rows[0]);
@@ -90,7 +119,18 @@ router.put(
   async (req, res) => {
     try {
       const { id } = req.params;
-      const { nome, email, empresa, tipo, estado } = req.body;
+      const {
+        nome,
+        email,
+        empresa,
+        telefone,
+        responsavel_seguranca,
+        email_responsavel,
+        contacto_permanente,
+        email_contacto_permanente,
+        tipo,
+        estado,
+      } = req.body;
 
       const result = await db.query(
         `
@@ -99,12 +139,29 @@ router.put(
             nome = $1,
             email = $2,
             empresa = $3,
-            tipo = $4,
-            estado = $5
-          WHERE id = $6
-          RETURNING id, nome, email, empresa, tipo, estado, data_criacao
+            telefone = $4,
+            responsavel_seguranca = $5,
+            email_responsavel = $6,
+            contacto_permanente = $7,
+            email_contacto_permanente = $8,
+            tipo = $9,
+            estado = $10
+          WHERE id = $11
+          RETURNING id, nome, email, empresa, telefone, responsavel_seguranca, email_responsavel, contacto_permanente, email_contacto_permanente, tipo, estado, data_criacao
           `,
-        [nome, email, empresa, tipo, estado, id]
+        [
+          nome,
+          email,
+          empresa,
+          telefone || null,
+          responsavel_seguranca || null,
+          email_responsavel || null,
+          contacto_permanente || null,
+          email_contacto_permanente || null,
+          tipo,
+          estado,
+          id,
+        ]
       );
 
       res.json(result.rows[0]);

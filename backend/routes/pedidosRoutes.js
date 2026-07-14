@@ -59,6 +59,7 @@ router.post("/", upload.single("ficheiro"), async (req, res) => {
       estado,
       descricao,
       cliente,
+      cliente_id,
       respostas,
       historico_respostas,
     } = req.body;
@@ -75,12 +76,13 @@ router.post("/", upload.single("ficheiro"), async (req, res) => {
         estado,
         descricao,
         cliente,
+        cliente_id,
         respostas,
         historico_respostas
         ,ficheiro
       )
       VALUES
-      ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       RETURNING *
     `,
       [
@@ -90,6 +92,7 @@ router.post("/", upload.single("ficheiro"), async (req, res) => {
         estado,
         descricao,
         cliente,
+        cliente_id || null,
         respostas ?? 0,
         JSON.stringify(historico_respostas ?? []),
         ficheiro,
@@ -113,6 +116,7 @@ router.put("/:id", async (req, res) => {
       estado,
       descricao,
       cliente,
+      cliente_id,
       historico_respostas,
       respostasIncremento,
     } = req.body;
@@ -127,10 +131,11 @@ router.put("/:id", async (req, res) => {
         estado = $4,
         descricao = $5,
         cliente = $6,
-        historico_respostas = COALESCE($8::jsonb, historico_respostas),
-        respostas = GREATEST(respostas + COALESCE($9, 0), 0),
+        cliente_id = $7,
+        historico_respostas = COALESCE($9::jsonb, historico_respostas),
+        respostas = GREATEST(respostas + COALESCE($10, 0), 0),
         data_atualizacao = CURRENT_TIMESTAMP
-      WHERE id = $7
+      WHERE id = $8
       RETURNING *
     `,
       [
@@ -140,6 +145,7 @@ router.put("/:id", async (req, res) => {
         estado,
         descricao,
         cliente,
+        cliente_id || null,
         id,
         historico_respostas ? JSON.stringify(historico_respostas) : null,
         respostasIncremento ?? 0,

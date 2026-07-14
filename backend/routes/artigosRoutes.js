@@ -90,6 +90,7 @@ router.post(
         conteudo,
         estado,
         imagem_url,
+        metadados,
       } = req.body;
 
       const imagem = req.file
@@ -106,7 +107,8 @@ router.post(
             autor,
             conteudo,
             estado,
-            imagem
+            imagem,
+            metadados
           )
           VALUES
           (
@@ -115,7 +117,8 @@ router.post(
             $3,
             $4,
             $5,
-            $6
+            $6,
+            $7::jsonb
           )
           RETURNING *
           `,
@@ -126,6 +129,7 @@ router.post(
             conteudo,
             estado,
             imagem,
+            metadados || "{}",
           ]
         );
 
@@ -237,6 +241,7 @@ router.put(
         conteudo,
         estado,
         imagem_url,
+        metadados,
       } = req.body;
 
       const novaImagem = req.file
@@ -253,8 +258,9 @@ router.put(
             autor = $3,
             conteudo = $4,
             estado = $5,
-            imagem = COALESCE(NULLIF($6, ''), imagem)
-          WHERE id = $7
+            imagem = COALESCE(NULLIF($6, ''), imagem),
+            metadados = $7::jsonb
+          WHERE id = $8
           RETURNING *
           `,
           [
@@ -264,6 +270,7 @@ router.put(
             conteudo,
             estado,
             novaImagem,
+            metadados || "{}",
             id,
           ]
         );

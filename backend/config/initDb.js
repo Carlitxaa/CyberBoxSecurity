@@ -133,6 +133,11 @@ async function initializeDatabase() {
   await db.query("ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS email VARCHAR(255)");
   await db.query("ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS password VARCHAR(255)");
   await db.query("ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS empresa VARCHAR(255)");
+  await db.query("ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS telefone VARCHAR(50)");
+  await db.query("ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS responsavel_seguranca VARCHAR(255)");
+  await db.query("ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS email_responsavel VARCHAR(255)");
+  await db.query("ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS contacto_permanente VARCHAR(255)");
+  await db.query("ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS email_contacto_permanente VARCHAR(255)");
   await db.query("ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS tipo VARCHAR(50)");
   await db.query("ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS estado VARCHAR(50) DEFAULT 'Ativo'");
   await db.query("ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
@@ -143,14 +148,17 @@ async function initializeDatabase() {
   await db.query("ALTER TABLE artigos ADD COLUMN IF NOT EXISTS conteudo TEXT");
   await db.query("ALTER TABLE artigos ADD COLUMN IF NOT EXISTS estado VARCHAR(50) DEFAULT 'Rascunho'");
   await db.query("ALTER TABLE artigos ADD COLUMN IF NOT EXISTS imagem VARCHAR(500)");
+  await db.query("ALTER TABLE artigos ADD COLUMN IF NOT EXISTS metadados JSONB NOT NULL DEFAULT '{}'::jsonb");
   await db.query("ALTER TABLE artigos ADD COLUMN IF NOT EXISTS data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
 
   await db.query("ALTER TABLE documentos ADD COLUMN IF NOT EXISTS nome VARCHAR(255)");
   await db.query("ALTER TABLE documentos ADD COLUMN IF NOT EXISTS titulo VARCHAR(255)");
   await db.query("ALTER TABLE documentos ADD COLUMN IF NOT EXISTS categoria VARCHAR(120)");
   await db.query("ALTER TABLE documentos ADD COLUMN IF NOT EXISTS cliente VARCHAR(255)");
+  await db.query("ALTER TABLE documentos ADD COLUMN IF NOT EXISTS cliente_id INTEGER");
   await db.query("ALTER TABLE documentos ADD COLUMN IF NOT EXISTS enviado_por VARCHAR(255)");
   await db.query("ALTER TABLE documentos ADD COLUMN IF NOT EXISTS ficheiro VARCHAR(500)");
+  await db.query("ALTER TABLE documentos ADD COLUMN IF NOT EXISTS metadados JSONB NOT NULL DEFAULT '{}'::jsonb");
   await db.query("ALTER TABLE documentos ADD COLUMN IF NOT EXISTS downloads INTEGER NOT NULL DEFAULT 0");
   await db.query("ALTER TABLE documentos ADD COLUMN IF NOT EXISTS data_upload TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
 
@@ -160,6 +168,7 @@ async function initializeDatabase() {
   await db.query("ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS estado VARCHAR(50) DEFAULT 'Pendente'");
   await db.query("ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS descricao TEXT");
   await db.query("ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS cliente VARCHAR(255)");
+  await db.query("ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS cliente_id INTEGER");
   await db.query("ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS respostas INTEGER NOT NULL DEFAULT 0");
   await db.query("ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS historico_respostas JSONB NOT NULL DEFAULT '[]'::jsonb");
   await db.query("ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS ficheiro VARCHAR(500)");

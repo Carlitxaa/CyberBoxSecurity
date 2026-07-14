@@ -96,7 +96,9 @@ router.post(
                 nome,
                 categoria,
                 cliente,
+                cliente_id,
                 enviado_por,
+                metadados,
             } = req.body;
 
             if (!nome || !categoria || !cliente || !enviado_por || !req.file) {
@@ -117,8 +119,10 @@ INSERT INTO documentos
   nome,
   categoria,
   cliente,
+  cliente_id,
   enviado_por,
-  ficheiro
+  ficheiro,
+  metadados
 )
 VALUES
 (
@@ -126,7 +130,9 @@ VALUES
   $2,
   $3,
   $4,
-  $5
+  $5,
+  $6,
+  $7::jsonb
 )
 RETURNING *
 `,
@@ -134,8 +140,10 @@ RETURNING *
                         nome,
                         categoria,
                         cliente,
+                        cliente_id || null,
                         enviado_por,
                         ficheiro,
+                        metadados || "{}",
                     ]
                 );
 

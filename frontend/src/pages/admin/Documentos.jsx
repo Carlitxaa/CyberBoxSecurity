@@ -6,6 +6,11 @@ import {
 
 import axios from "axios";
 import { API_URL } from "../../config/api";
+import DynamicMetadataFields from "../../components/DynamicMetadataFields";
+import {
+  categoriasGestao,
+  documentoCamposPorCategoria,
+} from "../../config/dynamicFields";
 import {
   FaSearch,
   FaPlus,
@@ -46,6 +51,16 @@ export default function Documentos() {
     cliente,
     setCliente,
   ] = useState("");
+
+  const [
+    clienteId,
+    setClienteId,
+  ] = useState("");
+
+  const [
+    metadados,
+    setMetadados,
+  ] = useState({});
 
   const [
     pesquisa,
@@ -147,6 +162,11 @@ export default function Documentos() {
       );
 
       formData.append(
+        "cliente_id",
+        clienteId
+      );
+
+      formData.append(
         "enviado_por",
         "Admin Teste"
       );
@@ -154,6 +174,11 @@ export default function Documentos() {
       formData.append(
         "ficheiro",
         ficheiro
+      );
+
+      formData.append(
+        "metadados",
+        JSON.stringify(metadados)
       );
 
       await axios.post(
@@ -177,6 +202,8 @@ export default function Documentos() {
       setNome("");
       setCategoria("");
       setCliente("");
+      setClienteId("");
+      setMetadados({});
       setFicheiro(null);
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -308,16 +335,7 @@ export default function Documentos() {
     setPaginaAtual(novaPagina);
   }
 
-  const categorias = [
-    "Relatórios",
-    "Documentação",
-    "Pen Tests",
-    "Incidentes",
-    "Políticas",
-    "Auditorias",
-    "NIS2",
-    "Outros",
-  ];
+  const categorias = categoriasGestao;
 
   return (
     <div
@@ -543,12 +561,20 @@ export default function Documentos() {
 
                   <select
                     className="form-select"
-                    value={cliente}
-                    onChange={(e) =>
+                    value={clienteId}
+                    onChange={(e) => {
+                      const selected =
+                        clientes.find(
+                          (clienteItem) =>
+                            String(clienteItem.id) ===
+                            e.target.value
+                        );
+
+                      setClienteId(e.target.value);
                       setCliente(
-                        e.target.value
-                      )
-                    }
+                        selected?.empresa || ""
+                      );
+                    }}
                     style={{
                       borderRadius:
                         "10px",
@@ -565,18 +591,27 @@ export default function Documentos() {
                             cliente.id
                           }
                           value={
-                            cliente.empresa
+                            cliente.id
                           }
                         >
-                          {
-                            cliente.empresa
-                          }
+                          {cliente.empresa} - {cliente.nome}
                         </option>
                       )
                     )}
                   </select>
                 </div>
               </div>
+
+              <DynamicMetadataFields
+                categoria={categoria}
+                fieldsByCategory={documentoCamposPorCategoria}
+                value={metadados}
+                onChange={setMetadados}
+                inputStyle={{
+                  borderRadius:
+                    "10px",
+                }}
+              />
 
               <div
                 style={{

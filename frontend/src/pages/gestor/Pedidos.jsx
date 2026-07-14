@@ -20,6 +20,7 @@ export default function Pedidos() {
   const [pedidoEditar, setPedidoEditar] = useState(null);
   const [pedidoVer, setPedidoVer] = useState(null);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [clientes, setClientes] = useState([]);
   const [novoPedido, setNovoPedido] = useState({
     titulo: "",
     categoria: "",
@@ -27,6 +28,7 @@ export default function Pedidos() {
     estado: "",
     descricao: "",
     cliente: "",
+    cliente_id: "",
   });
   const [mostrarRespostas, setMostrarRespostas] = useState(false);
   const [filtroPesquisa, setFiltroPesquisa] = useState("");
@@ -35,6 +37,7 @@ export default function Pedidos() {
 
   useEffect(() => {
     buscarPedidos();
+    buscarClientes();
   }, []);
 
   async function buscarPedidos() {
@@ -43,6 +46,17 @@ export default function Pedidos() {
       setPedidos(response.data);
     } catch (error) {
       console.error("Erro ao buscar pedidos:", error);
+    }
+  }
+
+  async function buscarClientes() {
+    try {
+      const response = await axios.get(`${API_URL}/utilizadores`);
+      setClientes(
+        response.data.filter((utilizador) => utilizador.tipo === "Cliente")
+      );
+    } catch (error) {
+      console.error("Erro ao buscar clientes:", error);
     }
   }
 
@@ -62,6 +76,7 @@ export default function Pedidos() {
         estado: "",
         descricao: "",
         cliente: "",
+        cliente_id: "",
       });
 
       setMostrarFormulario(false);
@@ -106,6 +121,7 @@ export default function Pedidos() {
       estado: pedidoAtual.estado,
       descricao: pedidoAtual.descricao,
       cliente: pedidoAtual.cliente,
+      cliente_id: pedidoAtual.cliente_id,
       historico_respostas: novaLista,
       respostasIncremento: -1,
     });
@@ -621,6 +637,7 @@ export default function Pedidos() {
                         estado: pedidoEditar.estado,
                         descricao: pedidoEditar.descricao,
                         cliente: pedidoEditar.cliente,
+                        cliente_id: pedidoEditar.cliente_id,
                         historico_respostas: proximoHistorico,
                         respostasIncremento: respostaNova ? 1 : 0,
                       }
@@ -746,24 +763,34 @@ export default function Pedidos() {
             <div className="col-md-6 mb-3">
               <label>Cliente</label>
 
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Nome do cliente"
-                value={novoPedido.cliente}
-                onChange={(e) =>
+              <select
+                className="form-select"
+                value={novoPedido.cliente_id}
+                onChange={(e) => {
+                  const selected = clientes.find(
+                    (cliente) => String(cliente.id) === e.target.value
+                  );
+
                   setNovoPedido({
                     ...novoPedido,
-                    cliente: e.target.value,
-                  })
-                }
+                    cliente_id: e.target.value,
+                    cliente: selected?.empresa || "",
+                  });
+                }}
                 style={{
                   borderRadius: "30px",
                   border: "2px solid #12C4EB",
                   padding: "12px 20px",
                   background: "white",
                 }}
-              />
+              >
+                <option value="">Selecione um cliente</option>
+                {clientes.map((cliente) => (
+                  <option key={cliente.id} value={cliente.id}>
+                    {cliente.empresa} - {cliente.nome}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 

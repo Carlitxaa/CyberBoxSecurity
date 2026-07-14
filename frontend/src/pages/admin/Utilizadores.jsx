@@ -54,6 +54,11 @@ export default function Utilizadores() {
     nome: "",
     email: "",
     empresa: "",
+    telefone: "",
+    responsavel_seguranca: "",
+    email_responsavel: "",
+    contacto_permanente: "",
+    email_contacto_permanente: "",
     tipo: "",
     estado: "",
   });
@@ -90,6 +95,11 @@ export default function Utilizadores() {
     email: "",
     password: "",
     empresa: "",
+    telefone: "",
+    responsavel_seguranca: "",
+    email_responsavel: "",
+    contacto_permanente: "",
+    email_contacto_permanente: "",
     tipo: "Cliente",
     estado: "Ativo",
   });
@@ -120,9 +130,17 @@ export default function Utilizadores() {
     }
 
     try {
+      const payload = {
+        ...novoUtilizador,
+        empresa:
+          novoUtilizador.tipo === "Cliente"
+            ? novoUtilizador.empresa
+            : novoUtilizador.empresa || "CyberBoxSecurity",
+      };
+
       await axios.post(
         `${API_URL}/utilizadores`,
-        novoUtilizador
+        payload
       );
 
       buscarUtilizadores();
@@ -132,6 +150,11 @@ export default function Utilizadores() {
         email: "",
         password: "",
         empresa: "",
+        telefone: "",
+        responsavel_seguranca: "",
+        email_responsavel: "",
+        contacto_permanente: "",
+        email_contacto_permanente: "",
         tipo: "Cliente",
         estado: "Ativo",
       });
@@ -172,9 +195,17 @@ export default function Utilizadores() {
 
   async function editarUtilizador() {
     try {
+      const payload = {
+        ...utilizadorEditar,
+        empresa:
+          utilizadorEditar.tipo === "Cliente"
+            ? utilizadorEditar.empresa
+            : utilizadorEditar.empresa || "CyberBoxSecurity",
+      };
+
       await axios.put(
         `${API_URL}/utilizadores/${utilizadorSelecionado}`,
-        utilizadorEditar
+        payload
       );
 
       buscarUtilizadores();
@@ -606,17 +637,17 @@ export default function Utilizadores() {
 
               <div className="mb-3">
                 <label>
-                  Empresa
+                  Número de telefone
                 </label>
                 <input
                   className="form-control"
                   value={
-                    utilizadorEditar.empresa
+                    utilizadorEditar.telefone || ""
                   }
                   onChange={(e) =>
                     setUtilizadorEditar({
                       ...utilizadorEditar,
-                      empresa:
+                      telefone:
                         e.target.value,
                     })
                   }
@@ -684,6 +715,33 @@ export default function Utilizadores() {
                   </select>
                 </div>
               </div>
+
+              {utilizadorEditar.tipo === "Cliente" && (
+                <div className="row">
+                  {[
+                    ["empresa", "Empresa"],
+                    ["responsavel_seguranca", "Responsável de Segurança"],
+                    ["email_responsavel", "Email do responsável"],
+                    ["contacto_permanente", "Contacto permanente"],
+                    ["email_contacto_permanente", "Email do contacto permanente"],
+                  ].map(([name, label]) => (
+                    <div className="col-md-6 mb-3" key={name}>
+                      <label>{label}</label>
+                      <input
+                        type={name.includes("email") ? "email" : "text"}
+                        className="form-control"
+                        value={utilizadorEditar[name] || ""}
+                        onChange={(e) =>
+                          setUtilizadorEditar({
+                            ...utilizadorEditar,
+                            [name]: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
 
               <div className="d-flex gap-3 mt-4">
                 <button
@@ -963,18 +1021,18 @@ export default function Utilizadores() {
 
             <div className="col-md-6 mb-3">
               <label>
-                Empresa
+                Número de telefone
               </label>
 
               <input
-                type="text"
+                type="tel"
                 className="form-control"
-                placeholder="Empresa"
-                value={novoUtilizador.empresa}
+                placeholder="Telefone (opcional)"
+                value={novoUtilizador.telefone}
                 onChange={(e) =>
                   setNovoUtilizador({
                     ...novoUtilizador,
-                    empresa: e.target.value,
+                    telefone: e.target.value,
                   })
                 }
                 style={{
@@ -1042,6 +1100,39 @@ export default function Utilizadores() {
               </select>
             </div>
           </div>
+
+          {novoUtilizador.tipo === "Cliente" && (
+            <div className="row">
+              {[
+                ["empresa", "Empresa"],
+                ["responsavel_seguranca", "Responsável de Segurança"],
+                ["email_responsavel", "Email do responsável"],
+                ["contacto_permanente", "Contacto permanente"],
+                ["email_contacto_permanente", "Email do contacto permanente"],
+              ].map(([name, label]) => (
+                <div className="col-md-6 mb-3" key={name}>
+                  <label>{label}</label>
+                  <input
+                    type={name.includes("email") ? "email" : "text"}
+                    className="form-control"
+                    value={novoUtilizador[name]}
+                    onChange={(e) =>
+                      setNovoUtilizador({
+                        ...novoUtilizador,
+                        [name]: e.target.value,
+                      })
+                    }
+                    style={{
+                      border: "2px solid #12C4EB",
+                      borderRadius: "30px",
+                      padding: "16px 20px",
+                      background: "white",
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
 
           <div className="d-flex gap-3">
             <button
@@ -1498,7 +1589,17 @@ export default function Utilizadores() {
                         email:
                           user.email,
                         empresa:
-                          user.empresa,
+                          user.empresa || "",
+                        telefone:
+                          user.telefone || "",
+                        responsavel_seguranca:
+                          user.responsavel_seguranca || "",
+                        email_responsavel:
+                          user.email_responsavel || "",
+                        contacto_permanente:
+                          user.contacto_permanente || "",
+                        email_contacto_permanente:
+                          user.email_contacto_permanente || "",
                         tipo:
                           user.tipo,
                         estado:
