@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { API_URL } from "../../config/api";
+import { categoriasPedidos } from "../../config/dynamicFields";
 import {
   FaSearch,
   FaEye,
@@ -559,9 +560,11 @@ export default function Pedidos() {
                     }
                   >
                     <option value="">Selecione</option>
-                    <option value="Suporte">Suporte</option>
-                    <option value="Relatório">Relatório</option>
-                    <option value="Outro">Outro</option>
+                    {categoriasPedidos.map((categoriaItem) => (
+                      <option key={categoriaItem} value={categoriaItem}>
+                        {categoriaItem}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -815,9 +818,11 @@ export default function Pedidos() {
                 }}
               >
                 <option value="">Selecionar</option>
-                <option value="Suporte">Suporte</option>
-                <option value="Relatório">Relatório</option>
-                <option value="Outro">Outro</option>
+                {categoriasPedidos.map((categoriaItem) => (
+                  <option key={categoriaItem} value={categoriaItem}>
+                    {categoriaItem}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -1039,9 +1044,11 @@ export default function Pedidos() {
               }}
             >
               <option value="">Todas as Categorias</option>
-              <option value="Suporte">Suporte</option>
-              <option value="Relatório">Relatório</option>
-              <option value="Outro">Outro</option>
+              {categoriasPedidos.map((categoriaItem) => (
+                <option key={categoriaItem} value={categoriaItem}>
+                  {categoriaItem}
+                </option>
+              ))}
             </select>
           </div>
 

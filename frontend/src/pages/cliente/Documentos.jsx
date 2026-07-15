@@ -51,6 +51,7 @@ export default function Documentos() {
       formData.append("nome", nome);
       formData.append("categoria", categoria);
       formData.append("cliente", currentUser.empresa);
+      formData.append("cliente_id", currentUser.id);
       formData.append("enviado_por", currentUser.nome);
       formData.append("ficheiro", ficheiro);
 

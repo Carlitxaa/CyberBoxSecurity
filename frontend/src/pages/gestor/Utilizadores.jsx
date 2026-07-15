@@ -16,6 +16,8 @@ import axios from "axios";
 import { API_URL } from "../../config/api";
 
 export default function Utilizadores() {
+  const canManageUsers = false;
+
   const [
     mostrarFormulario,
     setMostrarFormulario,
@@ -443,7 +445,7 @@ export default function Utilizadores() {
       )}
 
       {/* POPUP EDITAR */}
-      {mostrarEditar && (
+      {canManageUsers && mostrarEditar && (
         <div
           style={{
             position:
@@ -591,9 +593,6 @@ export default function Utilizadores() {
                     <option>
                       Cliente
                     </option>
-                    <option>
-                      Colaborador
-                    </option>
                   </select>
                 </div>
 
@@ -698,6 +697,7 @@ export default function Utilizadores() {
           </p>
         </div>
 
+        {canManageUsers && (
         <button
           onClick={() =>
             setMostrarFormulario(
@@ -719,10 +719,11 @@ export default function Utilizadores() {
           <FaPlus />
           Novo Utilizador
         </button>
+        )}
       </div>
 
       {/* FORMULÁRIO */}
-      {mostrarFormulario && (
+      {canManageUsers && mostrarFormulario && (
         <form
           onSubmit={criarUtilizador}
           style={{
@@ -878,7 +879,6 @@ export default function Utilizadores() {
               >
                 <option>Cliente</option>
                 <option>Gestor</option>
-                <option>Colaborador</option>
                 <option>Administrador</option>
               </select>
             </div>
@@ -960,8 +960,8 @@ export default function Utilizadores() {
             value: utilizadores.filter((u) => u.tipo === "Cliente").length,
           },
           {
-            title: "Colaboradores",
-            value: utilizadores.filter((u) => u.tipo === "Colaborador").length,
+            title: "Gestores",
+            value: utilizadores.filter((u) => u.tipo === "Gestor").length,
           },
           {
             title: "Administradores",
@@ -1039,7 +1039,6 @@ export default function Utilizadores() {
               <option>Administrador</option>
               <option>Gestor</option>
               <option>Cliente</option>
-              <option>Colaborador</option>
             </select>
           </div>
 
@@ -1178,6 +1177,7 @@ export default function Utilizadores() {
                     );
                   }}
                 />
+                {canManageUsers && (
                 <FaEdit
                   color="#6A5CFF"
                   style={{
@@ -1207,6 +1207,7 @@ export default function Utilizadores() {
                     );
                   }}
                 />
+                )}
               </div>
             </div>
           </div>

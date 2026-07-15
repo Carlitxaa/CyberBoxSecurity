@@ -27,8 +27,10 @@ export default function Dashboard() {
     setEstadoSistema,
   ] = useState({
     pedidosPendentes: 0,
+    totalPedidos: 0,
     documentosAtivos: 0,
     utilizadoresAtivos: 0,
+    artigosPublicados: 0,
     sistema: "Online",
   });
 
@@ -135,41 +137,27 @@ export default function Dashboard() {
         {[
           {
             title:
-              "Utilizadores Totais",
+              "Clientes Atribuídos",
             value:
-              utilizadores.length,
+              estadoSistema.utilizadoresAtivos,
           },
           {
             title:
-              "Administradores",
+              "Documentos",
             value:
-              utilizadores.filter(
-                (u) =>
-                  u.tipo ===
-                  "Administrador"
-              ).length,
+              estadoSistema.documentosAtivos,
           },
           {
             title:
-              "Clientes",
+              "Pedidos Pendentes",
             value:
-              utilizadores.filter(
-                (u) =>
-                  u.tipo ===
-                  "Cliente"
-              ).length,
+              estadoSistema.pedidosPendentes,
           },
           {
             title:
-              "Gestores + Colaboradores",
+              "Total de Pedidos",
             value:
-              utilizadores.filter(
-                (u) =>
-                  u.tipo ===
-                  "Gestor" ||
-                  u.tipo ===
-                  "Colaborador"
-              ).length,
+              estadoSistema.totalPedidos,
           },
         ].map(
           (card, index) => (

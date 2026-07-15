@@ -161,14 +161,12 @@ export default function Dashboard() {
           },
           {
             title:
-              "Gestores + Colaboradores",
+              "Gestores",
             value:
               utilizadores.filter(
                 (u) =>
                   u.tipo ===
-                  "Gestor" ||
-                  u.tipo ===
-                  "Colaborador"
+                  "Gestor"
               ).length,
           },
         ].map(

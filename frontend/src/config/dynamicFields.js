@@ -9,6 +9,25 @@ export const categoriasGestao = [
   "Outros",
 ];
 
+export const categoriasPedidos = [
+  "Incidente de Segurança",
+  "Phishing",
+  "Malware",
+  "Ransomware",
+  "Vulnerabilidades",
+  "Pen Test",
+  "Auditoria",
+  "NIS2",
+  "Gestão Documental",
+  "Configuração de Sistemas",
+  "Backup e Recuperação",
+  "Formação",
+  "Suporte Técnico",
+  "Pedido Comercial",
+  "Contacto Geral",
+  "Outro",
+];
+
 export const artigoCamposPorCategoria = {
   Relatórios: [
     { name: "data_relatorio", label: "Data do relatório", type: "date" },

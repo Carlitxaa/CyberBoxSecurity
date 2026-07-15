@@ -17,7 +17,7 @@ router.post("/", async (req, res) => {
 
     const result = await db.query(
       `
-      SELECT id, nome, email, empresa, tipo, estado, password
+      SELECT id, nome, email, empresa, gestor_id, tipo, estado, password
       FROM utilizadores
       WHERE email = $1
       `,
@@ -59,6 +59,7 @@ router.post("/", async (req, res) => {
         tipo: user.tipo,
         email: user.email,
         empresa: user.empresa,
+        gestor_id: user.gestor_id,
       },
       JWT_SECRET,
       { expiresIn: "8h" }
@@ -71,6 +72,7 @@ router.post("/", async (req, res) => {
         nome: user.nome,
         email: user.email,
         empresa: user.empresa,
+        gestor_id: user.gestor_id,
         tipo: user.tipo,
         estado: user.estado,
       },

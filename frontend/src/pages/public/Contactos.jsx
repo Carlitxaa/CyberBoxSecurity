@@ -43,9 +43,9 @@ function Contactos() {
     }
 
     try {
-      await axios.post(`${API_URL}/pedidos`, {
+      await axios.post(`${API_URL}/pedidos/public`, {
         titulo: `Pedido de contacto: ${nome}`,
-        categoria: "Contacto",
+        categoria: "Contacto Geral",
         prioridade: "Média",
         estado: "Pendente",
         descricao: `Mensagem: ${mensagem}\nEmail: ${email}\nTelefone: ${telefone}\nEmpresa: ${empresa}`,

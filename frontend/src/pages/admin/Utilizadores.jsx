@@ -54,6 +54,7 @@ export default function Utilizadores() {
     nome: "",
     email: "",
     empresa: "",
+    gestor_id: "",
     telefone: "",
     responsavel_seguranca: "",
     email_responsavel: "",
@@ -67,6 +68,12 @@ export default function Utilizadores() {
     utilizadores,
     setUtilizadores,
   ] = useState([]);
+
+  const gestores = utilizadores.filter(
+    (utilizador) =>
+      utilizador.tipo ===
+      "Gestor"
+  );
 
   const [
     pesquisa,
@@ -95,6 +102,7 @@ export default function Utilizadores() {
     email: "",
     password: "",
     empresa: "",
+    gestor_id: "",
     telefone: "",
     responsavel_seguranca: "",
     email_responsavel: "",
@@ -136,6 +144,10 @@ export default function Utilizadores() {
           novoUtilizador.tipo === "Cliente"
             ? novoUtilizador.empresa
             : novoUtilizador.empresa || "CyberBoxSecurity",
+        gestor_id:
+          novoUtilizador.tipo === "Cliente"
+            ? novoUtilizador.gestor_id
+            : null,
       };
 
       await axios.post(
@@ -150,6 +162,7 @@ export default function Utilizadores() {
         email: "",
         password: "",
         empresa: "",
+        gestor_id: "",
         telefone: "",
         responsavel_seguranca: "",
         email_responsavel: "",
@@ -172,6 +185,19 @@ export default function Utilizadores() {
 
   async function apagarUtilizador() {
     try {
+      const utilizador =
+        utilizadores.find(
+          (user) =>
+            user.id ===
+            utilizadorSelecionado
+        );
+
+      if (utilizador?.tipo !== "Cliente") {
+        alert("Apenas clientes podem ser eliminados.");
+        setMostrarApagar(false);
+        return;
+      }
+
       await axios.delete(
         `${API_URL}/utilizadores/${utilizadorSelecionado}`
       );
@@ -190,6 +216,7 @@ export default function Utilizadores() {
         "Erro ao apagar utilizador:",
         error
       );
+      alert(error.response?.data?.error || "Erro ao apagar utilizador");
     }
   }
 
@@ -201,6 +228,10 @@ export default function Utilizadores() {
           utilizadorEditar.tipo === "Cliente"
             ? utilizadorEditar.empresa
             : utilizadorEditar.empresa || "CyberBoxSecurity",
+        gestor_id:
+          utilizadorEditar.tipo === "Cliente"
+            ? utilizadorEditar.gestor_id
+            : null,
       };
 
       await axios.put(
@@ -681,9 +712,6 @@ export default function Utilizadores() {
                     <option>
                       Cliente
                     </option>
-                    <option>
-                      Colaborador
-                    </option>
                   </select>
                 </div>
 
@@ -740,6 +768,26 @@ export default function Utilizadores() {
                       />
                     </div>
                   ))}
+                  <div className="col-md-6 mb-3">
+                    <label>Gestor responsável</label>
+                    <select
+                      className="form-select"
+                      value={utilizadorEditar.gestor_id || ""}
+                      onChange={(e) =>
+                        setUtilizadorEditar({
+                          ...utilizadorEditar,
+                          gestor_id: e.target.value,
+                        })
+                      }
+                    >
+                      <option value="">Sem gestor atribuído</option>
+                      {gestores.map((gestor) => (
+                        <option key={gestor.id} value={gestor.id}>
+                          {gestor.nome}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               )}
 
@@ -1069,7 +1117,6 @@ export default function Utilizadores() {
               >
                 <option>Cliente</option>
                 <option>Gestor</option>
-                <option>Colaborador</option>
                 <option>Administrador</option>
               </select>
             </div>
@@ -1131,6 +1178,32 @@ export default function Utilizadores() {
                   />
                 </div>
               ))}
+              <div className="col-md-6 mb-3">
+                <label>Gestor responsável</label>
+                <select
+                  className="form-select"
+                  value={novoUtilizador.gestor_id || ""}
+                  onChange={(e) =>
+                    setNovoUtilizador({
+                      ...novoUtilizador,
+                      gestor_id: e.target.value,
+                    })
+                  }
+                  style={{
+                    border: "2px solid #12C4EB",
+                    borderRadius: "30px",
+                    background: "white",
+                    padding: "12px 20px",
+                  }}
+                >
+                  <option value="">Sem gestor atribuído</option>
+                  {gestores.map((gestor) => (
+                    <option key={gestor.id} value={gestor.id}>
+                      {gestor.nome}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           )}
 
@@ -1193,12 +1266,12 @@ export default function Utilizadores() {
           },
           {
             title:
-              "Colaboradores",
+              "Gestores",
             value:
               utilizadores.filter(
                 (u) =>
                   u.tipo ===
-                  "Colaborador"
+                  "Gestor"
               ).length,
           },
           {
@@ -1339,9 +1412,6 @@ export default function Utilizadores() {
                 Cliente
               </option>
 
-              <option>
-                Colaborador
-              </option>
             </select>
           </div>
 
@@ -1590,6 +1660,8 @@ export default function Utilizadores() {
                           user.email,
                         empresa:
                           user.empresa || "",
+                        gestor_id:
+                          user.gestor_id || "",
                         telefone:
                           user.telefone || "",
                         responsavel_seguranca:

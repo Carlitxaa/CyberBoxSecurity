@@ -1,17 +1,27 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
+const { authenticateToken } = require("../middleware/auth");
+const { scopedClientWhere } = require("../utils/accessControl");
+
+router.use(authenticateToken);
 
 // GET /dashboard/atividade-recente
 router.get("/atividade-recente", async (req, res) => {
   try {
     const atividades = [];
+    const scope = scopedClientWhere(req.user);
 
     // Utilizadores recentes
     try {
-      const utilizadores = await db.query(
-        `SELECT nome, data_criacao FROM utilizadores WHERE data_criacao IS NOT NULL ORDER BY data_criacao DESC LIMIT 5`
-      );
+      const utilizadores = req.user.tipo === "Administrador"
+        ? await db.query(
+            `SELECT nome, data_criacao FROM utilizadores WHERE data_criacao IS NOT NULL ORDER BY data_criacao DESC LIMIT 5`
+          )
+        : await db.query(
+            `SELECT nome, data_criacao FROM utilizadores WHERE tipo = 'Cliente' AND gestor_id = $1 AND data_criacao IS NOT NULL ORDER BY data_criacao DESC LIMIT 5`,
+            [req.user.id]
+          );
       utilizadores.rows.forEach((row) => {
         atividades.push({
           tipo: "utilizador",
@@ -28,8 +38,12 @@ router.get("/atividade-recente", async (req, res) => {
 
     // Documentos recentes
     try {
+      const documentosWhere = scope.clause
+        ? `WHERE ${scope.clause} AND data_upload IS NOT NULL`
+        : `WHERE data_upload IS NOT NULL`;
       const documentos = await db.query(
-        `SELECT titulo, data_upload FROM documentos WHERE data_upload IS NOT NULL ORDER BY data_upload DESC LIMIT 5`
+        `SELECT nome AS titulo, data_upload FROM documentos ${documentosWhere} ORDER BY data_upload DESC LIMIT 5`,
+        scope.values
       );
       documentos.rows.forEach((row) => {
         atividades.push({
@@ -47,8 +61,12 @@ router.get("/atividade-recente", async (req, res) => {
 
     // Pedidos recentes
     try {
+      const pedidosWhere = scope.clause
+        ? `WHERE ${scope.clause} AND data_criacao IS NOT NULL`
+        : `WHERE data_criacao IS NOT NULL`;
       const pedidos = await db.query(
-        `SELECT titulo, data_criacao FROM pedidos WHERE data_criacao IS NOT NULL ORDER BY data_criacao DESC LIMIT 5`
+        `SELECT titulo, data_criacao FROM pedidos ${pedidosWhere} ORDER BY data_criacao DESC LIMIT 5`,
+        scope.values
       );
       pedidos.rows.forEach((row) => {
         atividades.push({
@@ -98,25 +116,44 @@ router.get("/atividade-recente", async (req, res) => {
 // GET /dashboard/estado-sistema
 router.get("/estado-sistema", async (req, res) => {
   try {
-    // Pedidos pendentes
+    const scope = scopedClientWhere(req.user);
+    const scopeWhere = scope.clause ? `WHERE ${scope.clause}` : "";
+    const pendingWhere = scope.clause
+      ? `WHERE ${scope.clause} AND estado != 'Resolvido'`
+      : `WHERE estado != 'Resolvido'`;
+
     const pedidosPendentes = await db.query(
-      `SELECT COUNT(*) as count FROM pedidos WHERE estado != 'Resolvido'`
+      `SELECT COUNT(*) as count FROM pedidos ${pendingWhere}`,
+      scope.values
     );
 
-    // Documentos ativos
+    const totalPedidos = await db.query(
+      `SELECT COUNT(*) as count FROM pedidos ${scopeWhere}`,
+      scope.values
+    );
+
     const documentosAtivos = await db.query(
-      `SELECT COUNT(*) as count FROM documentos`
+      `SELECT COUNT(*) as count FROM documentos ${scopeWhere}`,
+      scope.values
     );
 
-    // Utilizadores ativos
-    const utilizadoresAtivos = await db.query(
-      `SELECT COUNT(*) as count FROM utilizadores`
+    const utilizadoresAtivos = req.user.tipo === "Administrador"
+      ? await db.query(`SELECT COUNT(*) as count FROM utilizadores`)
+      : await db.query(
+          `SELECT COUNT(*) as count FROM utilizadores WHERE tipo = 'Cliente' AND gestor_id = $1`,
+          [req.user.id]
+        );
+
+    const artigosPublicados = await db.query(
+      `SELECT COUNT(*) as count FROM artigos WHERE estado = 'Publicado'`
     );
 
     res.json({
       pedidosPendentes: parseInt(pedidosPendentes.rows[0].count),
+      totalPedidos: parseInt(totalPedidos.rows[0].count),
       documentosAtivos: parseInt(documentosAtivos.rows[0].count),
       utilizadoresAtivos: parseInt(utilizadoresAtivos.rows[0].count),
+      artigosPublicados: parseInt(artigosPublicados.rows[0].count),
       sistema: "Online",
     });
   } catch (error) {

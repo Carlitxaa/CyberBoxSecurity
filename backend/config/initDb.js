@@ -71,6 +71,7 @@ async function initializeDatabase() {
       email VARCHAR(255) UNIQUE NOT NULL,
       password VARCHAR(255) NOT NULL,
       empresa VARCHAR(255) NOT NULL,
+      gestor_id INTEGER,
       tipo VARCHAR(50) NOT NULL,
       estado VARCHAR(50) NOT NULL DEFAULT 'Ativo',
       data_criacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -133,6 +134,7 @@ async function initializeDatabase() {
   await db.query("ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS email VARCHAR(255)");
   await db.query("ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS password VARCHAR(255)");
   await db.query("ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS empresa VARCHAR(255)");
+  await db.query("ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS gestor_id INTEGER");
   await db.query("ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS telefone VARCHAR(50)");
   await db.query("ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS responsavel_seguranca VARCHAR(255)");
   await db.query("ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS email_responsavel VARCHAR(255)");
@@ -177,6 +179,11 @@ async function initializeDatabase() {
 
   await db.query("ALTER TABLE newsletter ADD COLUMN IF NOT EXISTS email VARCHAR(255)");
   await db.query("ALTER TABLE newsletter ADD COLUMN IF NOT EXISTS data_subscricao TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+
+  await db.query("UPDATE utilizadores SET tipo = 'Gestor' WHERE tipo = 'Colaborador'");
+  await db.query("CREATE INDEX IF NOT EXISTS idx_utilizadores_gestor_id ON utilizadores(gestor_id)");
+  await db.query("CREATE INDEX IF NOT EXISTS idx_documentos_cliente_id ON documentos(cliente_id)");
+  await db.query("CREATE INDEX IF NOT EXISTS idx_pedidos_cliente_id ON pedidos(cliente_id)");
 
   await ensureAdminUser();
 }
