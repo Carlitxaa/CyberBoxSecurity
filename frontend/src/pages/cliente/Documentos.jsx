@@ -2,6 +2,8 @@
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../../config/api";
+import DynamicMetadataFields from "../../components/DynamicMetadataFields";
+import { categoriasGestao, documentoCamposPorCategoria } from "../../config/dynamicFields";
 import { FaSearch, FaDownload, FaFilePdf, FaPlus, FaUpload, FaTimes } from "react-icons/fa";
 import { getCurrentUser } from "../../utils/auth";
 
@@ -12,6 +14,7 @@ export default function Documentos() {
   const [documentos, setDocumentos] = useState([]);
   const [nome, setNome] = useState("");
   const [categoria, setCategoria] = useState("");
+  const [metadados, setMetadados] = useState({});
   const [pesquisa, setPesquisa] = useState("");
   const [filtroCategoria, setFiltroCategoria] = useState("");
   const [paginaAtual, setPaginaAtual] = useState(1);
@@ -40,10 +43,34 @@ export default function Documentos() {
     setFicheiro(e.target.files?.[0] || null);
   }
 
+  function getDownloadFileName(response, doc) {
+    const disposition = response.headers["content-disposition"];
+    if (disposition) {
+      const encodedMatch = /filename\*=UTF-8''(.+)$/.exec(disposition);
+      if (encodedMatch) {
+        return decodeURIComponent(encodedMatch[1]);
+      }
+      const match = /filename="?([^";]+)"?/.exec(disposition);
+      if (match) {
+        return match[1];
+      }
+    }
+    const extension = doc.ficheiro?.includes(".") ? doc.ficheiro.substring(doc.ficheiro.lastIndexOf(".")) : "";
+    return doc.nome ? `${doc.nome}${extension}` : doc.ficheiro || "download";
+  }
+
   async function criarDocumento() {
     if (!nome || !categoria || !ficheiro) {
       alert("Preencha todos os campos e selecione um ficheiro.");
       return;
+    }
+
+    if (categoria === "Ativos Tecnológicos") {
+      const extension = ficheiro.name.split(".").pop()?.toLowerCase();
+      if (!extension || !["xlsx", "xls"].includes(extension)) {
+        alert("O upload para Ativos Tecnológicos deve ser um ficheiro Excel (.xlsx ou .xls). ");
+        return;
+      }
     }
 
     try {
@@ -54,6 +81,7 @@ export default function Documentos() {
       formData.append("cliente_id", currentUser.id);
       formData.append("enviado_por", currentUser.nome);
       formData.append("ficheiro", ficheiro);
+      formData.append("metadados", JSON.stringify(metadados));
 
       await axios.post(`${API_URL}/documentos`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -61,6 +89,7 @@ export default function Documentos() {
 
       setNome("");
       setCategoria("");
+      setMetadados({});
       setFicheiro(null);
       setMostrarModal(false);
 
@@ -81,17 +110,16 @@ export default function Documentos() {
     }
     try {
       const response = await axios.get(`${API_URL}/documentos/${doc.id}/download`, { responseType: "blob" });
-      await axios.put(`${API_URL}/documentos/${doc.id}/download`);
       const blob = new Blob([response.data]);
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = doc.ficheiro;
+      link.download = getDownloadFileName(response, doc);
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-      setDocumentos(documentos.map(d => d.id === doc.id ? { ...d, downloads: (d.downloads || 0) + 1 } : d));
+      setDocumentos(documentos.map((d) => (d.id === doc.id ? { ...d, downloads: (d.downloads || 0) + 1 } : d)));
     } catch (error) {
       console.error("Erro ao baixar ficheiro:", error);
       alert("Erro ao descarregar o ficheiro.");
@@ -143,17 +171,27 @@ export default function Documentos() {
               <div className="row">
                 <div className="col-md-12">
                   <label>Categoria</label>
-                  <select className="form-select" value={categoria} onChange={(e) => setCategoria(e.target.value)} style={{ borderRadius: "10px" }}>
+                  <select className="form-select" value={categoria} onChange={(e) => {
+                      setCategoria(e.target.value);
+                      setMetadados({});
+                    }} style={{ borderRadius: "10px" }}>
                     <option value="">Selecionar</option>
-                    <option value="Relatórios">Relatórios</option>
-                    <option value="Documentação">Documentação</option>
-                    <option value="Pen Tests">Pen Tests</option>
-                    <option value="Incidentes">Incidentes</option>
-                    <option value="Políticas">Políticas</option>
-                    <option value="Outros">Outros</option>
+                    {categoriasGestao.map((categoriaItem) => (
+                      <option key={categoriaItem} value={categoriaItem}>
+                        {categoriaItem}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
+
+              <DynamicMetadataFields
+                categoria={categoria}
+                fieldsByCategory={documentoCamposPorCategoria}
+                value={metadados}
+                onChange={setMetadados}
+                inputStyle={{ borderRadius: "10px" }}
+              />
 
               <div style={{ background: "#EEF4FF", padding: "15px", borderRadius: "12px", marginTop: "20px", color: "#1E40AF", fontSize: "14px" }}>
                 ℹ O documento será armazenado de forma segura e ficará disponível para todos os membros da empresa.

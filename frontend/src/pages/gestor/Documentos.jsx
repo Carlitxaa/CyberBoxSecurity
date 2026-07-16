@@ -21,69 +21,19 @@ import {
 } from "react-icons/fa";
 
 export default function Documentos() {
-  const [
-    mostrarModal,
-    setMostrarModal,
-  ] = useState(false);
-
-  const [
-    documentos,
-    setDocumentos,
-  ] = useState([]);
-
-  const [
-    clientes,
-    setClientes,
-  ] = useState([]);
-
-  const [
-    nome,
-    setNome,
-  ] = useState("");
-
-  const [
-    categoria,
-    setCategoria,
-  ] = useState("");
-
-  const [
-    cliente,
-    setCliente,
-  ] = useState("");
-
-  const [
-    clienteId,
-    setClienteId,
-  ] = useState("");
-
-  const [
-    metadados,
-    setMetadados,
-  ] = useState({});
-
-  const [
-    pesquisa,
-    setPesquisa,
-  ] = useState("");
-
-  const [
-    filtroCategoria,
-    setFiltroCategoria,
-  ] = useState("");
-
-  const [
-    paginaAtual,
-    setPaginaAtual,
-  ] = useState(1);
-
-  const documentosPorPagina =
-    6;
-
-  const [
-    ficheiro,
-    setFicheiro,
-  ] = useState(null);
-
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [documentos, setDocumentos] = useState([]);
+  const [clientes, setClientes] = useState([]);
+  const [nome, setNome] = useState("");
+  const [categoria, setCategoria] = useState("");
+  const [cliente, setCliente] = useState("");
+  const [clienteId, setClienteId] = useState("");
+  const [metadados, setMetadados] = useState({});
+  const [pesquisa, setPesquisa] = useState("");
+  const [filtroCategoria, setFiltroCategoria] = useState("");
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const documentosPorPagina = 6;
+  const [ficheiro, setFicheiro] = useState(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -133,12 +83,38 @@ export default function Documentos() {
     setFicheiro(e.target.files?.[0] || null);
   }
 
+  function getDownloadFileName(response, doc) {
+    const disposition = response.headers["content-disposition"];
+    if (disposition) {
+      const encodedMatch = /filename\*=UTF-8''(.+)$/.exec(disposition);
+      if (encodedMatch) {
+        return decodeURIComponent(encodedMatch[1]);
+      }
+      const match = /filename="?([^";]+)"?/.exec(disposition);
+      if (match) {
+        return match[1];
+      }
+    }
+    const extension = doc.ficheiro?.includes(".") ? doc.ficheiro.substring(doc.ficheiro.lastIndexOf(".")) : "";
+    return doc.nome ? `${doc.nome}${extension}` : doc.ficheiro || "download";
+  }
+
   async function criarDocumento() {
     if (!nome || !categoria || !cliente || !ficheiro) {
       alert(
         "Preencha todos os campos e selecione um ficheiro."
       );
       return;
+    }
+
+    if (categoria === "Ativos Tecnológicos") {
+      const extension = ficheiro.name.split(".").pop()?.toLowerCase();
+      if (!extension || !["xlsx", "xls"].includes(extension)) {
+        alert(
+          "O upload para Ativos Tecnológicos deve ser um ficheiro Excel (.xlsx ou .xls). "
+        );
+        return;
+      }
     }
 
     try {
@@ -229,13 +205,12 @@ export default function Documentos() {
         `${API_URL}/documentos/${doc.id}/download`,
         { responseType: "blob" }
       );
-      await axios.put(`${API_URL}/documentos/${doc.id}/download`);
 
       const blob = new Blob([response.data]);
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = doc.ficheiro;
+      link.download = getDownloadFileName(response, doc);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -502,11 +477,10 @@ export default function Documentos() {
                   <select
                     className="form-select"
                     value={categoria}
-                    onChange={(e) =>
-                      setCategoria(
-                        e.target.value
-                      )
-                    }
+                    onChange={(e) => {
+                      setCategoria(e.target.value);
+                      setMetadados({});
+                    }}
                     style={{
                       borderRadius:
                         "10px",

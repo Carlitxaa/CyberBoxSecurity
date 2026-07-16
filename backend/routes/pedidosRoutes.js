@@ -18,7 +18,14 @@ fs.mkdirSync(uploadsPath, { recursive: true });
 const storage = multer.diskStorage({
   destination: uploadsPath,
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
+    const safeName = path
+      .basename(file.originalname, path.extname(file.originalname))
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-zA-Z0-9_-]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .toLowerCase();
+    cb(null, `${Date.now()}-${safeName || "ficheiro"}${path.extname(file.originalname)}`);
   },
 });
 
@@ -35,6 +42,7 @@ router.post("/public", async (req, res) => {
       cliente,
       respostas,
       historico_respostas,
+      metadados,
     } = req.body;
 
     const result = await db.query(
@@ -50,10 +58,11 @@ router.post("/public", async (req, res) => {
         cliente_id,
         respostas,
         historico_respostas,
+        metadados,
         ficheiro
       )
       VALUES
-      ($1, $2, $3, $4, $5, $6, NULL, $7, $8, NULL)
+      ($1, $2, $3, $4, $5, $6, NULL, $7, $8, $9::jsonb, NULL)
       RETURNING *
       `,
       [
@@ -65,6 +74,7 @@ router.post("/public", async (req, res) => {
         cliente,
         respostas ?? 0,
         JSON.stringify(historico_respostas ?? []),
+        JSON.stringify(metadados ?? {}),
       ]
     );
 
@@ -123,6 +133,7 @@ router.post("/", upload.single("ficheiro"), async (req, res) => {
       cliente_id,
       respostas,
       historico_respostas,
+      metadados,
     } = req.body;
 
     const resolvedClientId = req.user.tipo === "Cliente" ? req.user.id : cliente_id;
@@ -155,10 +166,11 @@ router.post("/", upload.single("ficheiro"), async (req, res) => {
         cliente_id,
         respostas,
         historico_respostas,
+        metadados,
         ficheiro
       )
       VALUES
-      ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10::jsonb, $11)
       RETURNING *
       `,
       [
@@ -171,6 +183,7 @@ router.post("/", upload.single("ficheiro"), async (req, res) => {
         resolvedClientId || null,
         respostas ?? 0,
         JSON.stringify(historico_respostas ?? []),
+        JSON.stringify(metadados ?? {}),
         ficheiro,
       ]
     );
@@ -215,6 +228,7 @@ router.put("/:id", async (req, res) => {
       cliente,
       cliente_id,
       historico_respostas,
+      metadados,
       respostasIncremento,
     } = req.body;
 
@@ -243,8 +257,9 @@ router.put("/:id", async (req, res) => {
         descricao = $5,
         cliente = $6,
         cliente_id = $7,
-        historico_respostas = COALESCE($9::jsonb, historico_respostas),
-        respostas = GREATEST(respostas + COALESCE($10, 0), 0),
+        metadados = COALESCE($9::jsonb, metadados),
+        historico_respostas = COALESCE($10::jsonb, historico_respostas),
+        respostas = GREATEST(respostas + COALESCE($11, 0), 0),
         data_atualizacao = CURRENT_TIMESTAMP
       WHERE id = $8
       RETURNING *
@@ -258,6 +273,7 @@ router.put("/:id", async (req, res) => {
         targetClientName,
         targetClientId || null,
         id,
+        JSON.stringify(metadados ?? {}),
         historico_respostas ? JSON.stringify(historico_respostas) : null,
         respostasIncremento ?? 0,
       ]

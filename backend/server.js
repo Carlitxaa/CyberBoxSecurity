@@ -59,28 +59,29 @@ const allowedOrigins =
     .filter(Boolean);
 
 app.use(
-  cors({
-    origin(origin, callback) {
-      if (
-        !origin ||
-        allowedOrigins.length === 0 ||
-        allowedOrigins.includes(origin)
-      ) {
-        callback(null, true);
-        return;
-      }
-
-      callback(new Error("Origem bloqueada pelo CORS"));
-    },
-  })
-);
-
-app.use(
   express.json()
 );
 
 app.use(
   express.urlencoded({ extended: true })
+);
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(new Error("Origem bloqueada pelo CORS"));
+    },
+    exposedHeaders: ["Content-Disposition"],
+  })
+);
+
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "uploads"))
 );
 
 app.use((req, res, next) => {
@@ -158,13 +159,3 @@ async function startServer() {
 }
 
 startServer();
-
-app.use(
-  "/uploads",
-  express.static(
-    path.join(
-      __dirname,
-      "uploads"
-    )
-  )
-);

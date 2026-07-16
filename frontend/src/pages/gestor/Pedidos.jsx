@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { API_URL } from "../../config/api";
-import { categoriasPedidos } from "../../config/dynamicFields";
+import DynamicMetadataFields from "../../components/DynamicMetadataFields";
+import { categoriasPedidos, pedidoCamposPorCategoria } from "../../config/dynamicFields";
 import {
   FaSearch,
   FaEye,
@@ -30,6 +31,7 @@ export default function Pedidos() {
     descricao: "",
     cliente: "",
     cliente_id: "",
+    metadados: {},
   });
   const [mostrarRespostas, setMostrarRespostas] = useState(false);
   const [filtroPesquisa, setFiltroPesquisa] = useState("");
@@ -78,6 +80,7 @@ export default function Pedidos() {
         descricao: "",
         cliente: "",
         cliente_id: "",
+        metadados: {},
       });
 
       setMostrarFormulario(false);
@@ -158,6 +161,7 @@ export default function Pedidos() {
     setPedidoEditar({
       ...pedido,
       resposta: "",
+      metadados: pedido.metadados || {},
     });
     setMostrarEditar(true);
   }
@@ -556,6 +560,7 @@ export default function Pedidos() {
                       setPedidoEditar({
                         ...pedidoEditar,
                         categoria: e.target.value,
+                        metadados: {},
                       })
                     }
                   >
@@ -808,6 +813,7 @@ export default function Pedidos() {
                   setNovoPedido({
                     ...novoPedido,
                     categoria: e.target.value,
+                    metadados: {},
                   })
                 }
                 style={{
@@ -824,6 +830,21 @@ export default function Pedidos() {
                   </option>
                 ))}
               </select>
+            </div>
+
+            <div className="col-md-12 mb-3">
+              <DynamicMetadataFields
+                categoria={novoPedido.categoria}
+                fieldsByCategory={pedidoCamposPorCategoria}
+                value={novoPedido.metadados}
+                onChange={(metadados) => setNovoPedido({ ...novoPedido, metadados })}
+                inputStyle={{
+                  border: "2px solid #12C4EB",
+                  borderRadius: "30px",
+                  background: "white",
+                  padding: "12px 20px",
+                }}
+              />
             </div>
 
             <div className="col-md-4 mb-3">

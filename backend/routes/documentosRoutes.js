@@ -20,11 +20,23 @@ fs.mkdirSync(uploadsPath, { recursive: true });
 const storage = multer.diskStorage({
   destination: uploadsPath,
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
+    const safeName = path
+      .basename(file.originalname, path.extname(file.originalname))
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-zA-Z0-9_-]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .toLowerCase();
+    cb(null, `${Date.now()}-${safeName || "ficheiro"}${path.extname(file.originalname)}`);
   },
 });
 
 const upload = multer({ storage });
+
+function resolveUploadPath(fileName) {
+  const storedName = path.basename(String(fileName || ""));
+  return path.join(uploadsPath, storedName);
+}
 
 router.get("/", async (req, res) => {
   try {
@@ -156,7 +168,7 @@ router.get("/:id/download", async (req, res) => {
       return res.status(403).json({ error: "Sem permissao para este documento" });
     }
 
-    const filePath = path.join(uploadsPath, doc.ficheiro);
+    const filePath = resolveUploadPath(doc.ficheiro);
 
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ error: "Ficheiro do documento nao encontrado" });
@@ -164,7 +176,12 @@ router.get("/:id/download", async (req, res) => {
 
     const downloadName = doc.nome
       ? `${doc.nome}${path.extname(doc.ficheiro)}`
-      : doc.ficheiro;
+      : path.basename(doc.ficheiro);
+
+    await pool.query(
+      "UPDATE documentos SET downloads = COALESCE(downloads, 0) + 1 WHERE id = $1",
+      [req.params.id]
+    );
 
     res.download(filePath, downloadName);
   } catch (error) {

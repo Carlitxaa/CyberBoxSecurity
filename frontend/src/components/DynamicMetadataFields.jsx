@@ -37,6 +37,14 @@ export default function DynamicMetadataFields({
                 </option>
               ))}
             </select>
+          ) : field.type === "textarea" ? (
+            <textarea
+              className="form-control"
+              rows={3}
+              value={(value || {})[field.name] || ""}
+              onChange={(e) => updateField(field.name, e.target.value)}
+              style={inputStyle}
+            />
           ) : (
             <input
               type={field.type || "text"}

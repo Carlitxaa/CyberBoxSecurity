@@ -116,6 +116,7 @@ async function initializeDatabase() {
       cliente VARCHAR(255),
       respostas INTEGER NOT NULL DEFAULT 0,
       historico_respostas JSONB NOT NULL DEFAULT '[]'::jsonb,
+      metadados JSONB NOT NULL DEFAULT '{}'::jsonb,
       ficheiro VARCHAR(500),
       data_criacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       data_atualizacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -173,6 +174,7 @@ async function initializeDatabase() {
   await db.query("ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS cliente_id INTEGER");
   await db.query("ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS respostas INTEGER NOT NULL DEFAULT 0");
   await db.query("ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS historico_respostas JSONB NOT NULL DEFAULT '[]'::jsonb");
+  await db.query("ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS metadados JSONB NOT NULL DEFAULT '{}'::jsonb");
   await db.query("ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS ficheiro VARCHAR(500)");
   await db.query("ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS data_atualizacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
   await db.query("ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP");

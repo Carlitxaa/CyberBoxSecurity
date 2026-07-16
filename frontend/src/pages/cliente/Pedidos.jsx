@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../../config/api";
-import { categoriasPedidos } from "../../config/dynamicFields";
+import DynamicMetadataFields from "../../components/DynamicMetadataFields";
+import { categoriasPedidos, pedidoCamposPorCategoria } from "../../config/dynamicFields";
 import {
   FaSearch,
   FaEye,
@@ -24,6 +25,7 @@ export default function Pedidos() {
     titulo: "",
     categoria: "",
     descricao: "",
+    metadados: {},
   });
   const [mostrarRespostas, setMostrarRespostas] = useState(false);
   const [filtroPesquisa, setFiltroPesquisa] = useState("");
@@ -75,12 +77,13 @@ export default function Pedidos() {
         prioridade: "Normal",
         estado: "Pendente",
         descricao: novoPedido.descricao,
+        metadados: novoPedido.metadados,
         cliente: currentUser.empresa,
         cliente_id: currentUser.id,
         respostas: 0,
         historico_respostas: [],
       });
-      setNovoPedido({ titulo: "", categoria: "", descricao: "" });
+      setNovoPedido({ titulo: "", categoria: "", descricao: "", metadados: {} });
       setMostrarFormulario(false);
       buscarPedidos();
     } catch (error) {
@@ -263,7 +266,7 @@ export default function Pedidos() {
                 <select
                   className="form-select"
                   value={novoPedido.categoria}
-                  onChange={(e) => setNovoPedido((prev) => ({ ...prev, categoria: e.target.value }))}
+                  onChange={(e) => setNovoPedido((prev) => ({ ...prev, categoria: e.target.value, metadados: {} }))}
                   style={{
                     border: "2px solid #12C4EB",
                     borderRadius: "30px",
@@ -280,6 +283,19 @@ export default function Pedidos() {
                 </select>
               </div>
             </div>
+
+            <DynamicMetadataFields
+              categoria={novoPedido.categoria}
+              fieldsByCategory={pedidoCamposPorCategoria}
+              value={novoPedido.metadados}
+              onChange={(metadados) => setNovoPedido((prev) => ({ ...prev, metadados }))}
+              inputStyle={{
+                border: "2px solid #12C4EB",
+                borderRadius: "30px",
+                padding: "12px 20px",
+                background: "white",
+              }}
+            />
 
             <div className="mb-3">
               <label>Descrição</label>
